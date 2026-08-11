@@ -1,0 +1,76 @@
+<section class="dashboard-page">
+
+  <h2>Dashboard</h2>
+
+  <app-page-card>
+
+    <span card-title>
+      Student Overview
+    </span>
+
+    <p>
+      Welcome to the Student Management System.
+    </p>
+
+    @if (students$ | async; as students) {
+
+      <p>
+        <strong>Total Students:</strong>
+        {{ students.length }}
+      </p>
+
+    } @else {
+
+      <p>Loading dashboard...</p>
+
+    }
+
+    <div card-actions>
+
+      <a
+        mat-stroked-button
+        routerLink="/students">
+        View Students
+      </a>
+
+      <a
+        mat-flat-button
+        routerLink="/add-student">
+        Add Student
+      </a>
+
+    </div>
+
+  </app-page-card>
+
+  <app-page-card>
+
+    <span card-title>
+      Quick Filters
+    </span>
+
+    <p>
+      View students from a specific course.
+    </p>
+
+    <div card-actions>
+
+      <a
+        mat-stroked-button
+        routerLink="/students"
+        [queryParams]="{ course: 'Computer Science' }">
+        Computer Science
+      </a>
+
+      <a
+        mat-stroked-button
+        routerLink="/students"
+        [queryParams]="{ course: 'Information Technology' }">
+        Information Technology
+      </a>
+
+    </div>
+
+  </app-page-card>
+
+</section>

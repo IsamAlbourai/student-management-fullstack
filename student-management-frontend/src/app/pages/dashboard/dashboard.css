@@ -1,0 +1,15 @@
+.dashboard-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.dashboard-page h2 {
+  margin-bottom: 0;
+}
+
+[card-actions] {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}

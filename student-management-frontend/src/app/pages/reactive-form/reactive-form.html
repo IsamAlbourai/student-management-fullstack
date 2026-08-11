@@ -1,0 +1,171 @@
+<section class="form-page">
+
+  <h2>Add Student</h2>
+
+  <p class="page-description">
+    Enter the student information below.
+  </p>
+
+  <button
+    mat-stroked-button
+    type="button"
+    (click)="focusNameInput()">
+    Focus Student Name
+  </button>
+
+  <form
+    class="student-form"
+    [formGroup]="studentForm"
+    (ngSubmit)="saveStudent()">
+
+    <mat-form-field appearance="outline">
+
+      <mat-label>Student Name</mat-label>
+
+      <input
+        #nameInput
+        matInput
+        type="text"
+        formControlName="name">
+
+      @if (
+        studentForm.get('name')?.hasError('required') &&
+        studentForm.get('name')?.touched
+        ) {
+        <mat-error>
+          Name is required.
+        </mat-error>
+      }
+
+      @if (
+        studentForm.get('name')?.hasError('minlength') &&
+        studentForm.get('name')?.touched
+        ) {
+        <mat-error>
+          Name must contain at least 3 characters.
+        </mat-error>
+      }
+
+      @if (
+        studentForm.get('name')?.hasError('invalidName') &&
+        studentForm.get('name')?.touched
+        ) {
+        <mat-error>
+          Name must contain letters only.
+        </mat-error>
+      }
+
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+
+      <mat-label>Age</mat-label>
+
+      <input
+        matInput
+        type="number"
+        formControlName="age">
+
+      @if (
+        studentForm.get('age')?.invalid &&
+        studentForm.get('age')?.touched
+        ) {
+        <mat-error>
+          Age is required and must be 18 or above.
+        </mat-error>
+      }
+
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+
+      <mat-label>Course</mat-label>
+
+      <input
+        matInput
+        type="text"
+        formControlName="course">
+
+      @if (
+        studentForm.get('course')?.invalid &&
+        studentForm.get('course')?.touched
+        ) {
+        <mat-error>
+          Course is required.
+        </mat-error>
+      }
+
+    </mat-form-field>
+
+    <div class="skills-section">
+
+      <div class="skills-heading">
+
+        <h3>Skills</h3>
+
+        <button
+          mat-stroked-button
+          type="button"
+          (click)="addSkill()">
+          Add Skill
+        </button>
+
+      </div>
+
+      <div formArrayName="skills">
+
+        @for (
+          skill of skills.controls;
+          track $index;
+          let i = $index
+          ) {
+          <div class="skill-row">
+
+            <mat-form-field appearance="outline">
+
+              <mat-label>Skill {{ i + 1 }}</mat-label>
+
+              <input
+                matInput
+                type="text"
+                [formControlName]="i">
+
+              @if (
+                skill.invalid &&
+                skill.touched
+                ) {
+                <mat-error>
+                  Skill is required.
+                </mat-error>
+              }
+
+            </mat-form-field>
+
+            <button
+              mat-stroked-button
+              type="button"
+              (click)="removeSkill(i)">
+              Remove
+            </button>
+
+          </div>
+        }
+
+      </div>
+
+    </div>
+
+    <div class="form-actions">
+
+      <button
+        mat-flat-button
+        type="submit"
+        [disabled]="studentForm.invalid">
+        Save Student
+      </button>
+
+    </div>
+
+  </form>
+
+</section>

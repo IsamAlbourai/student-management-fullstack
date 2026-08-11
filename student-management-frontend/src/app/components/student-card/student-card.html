@@ -1,0 +1,31 @@
+<div class="student-card">
+
+  <h3>{{ student.name }}</h3>
+
+  <p>
+    <strong>ID:</strong>
+    {{ student.id }}
+  </p>
+
+  <p>
+    <strong>Age:</strong>
+    {{ student.age }}
+  </p>
+
+  <p>
+    <strong>Course:</strong>
+    {{ student.course }}
+  </p>
+
+  @if (student.skills && student.skills.length > 0) {
+    <p>
+      <strong>Skills:</strong>
+      {{ student.skills.join(', ') }}
+    </p>
+  }
+
+  <button type="button" (click)="requestDelete()">
+    Delete Student
+  </button>
+
+</div>

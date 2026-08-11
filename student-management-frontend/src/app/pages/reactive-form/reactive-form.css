@@ -1,0 +1,53 @@
+.form-page {
+  max-width: 700px;
+}
+
+.page-description {
+  margin-bottom: 24px;
+}
+
+.student-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 24px;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+.skills-section {
+  margin-top: 12px;
+}
+
+.skills-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.skills-heading h3 {
+  margin: 0;
+}
+
+.skill-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.skill-row mat-form-field {
+  flex: 1;
+}
+
+.skill-row button {
+  margin-top: 8px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+}

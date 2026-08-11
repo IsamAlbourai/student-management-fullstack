@@ -1,0 +1,60 @@
+mat-toolbar {
+  min-height: 72px;
+  padding: 0 32px;
+  border-bottom: 1px solid #d8dce5;
+  background-color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+mat-toolbar > span:first-child {
+  font-size: 24px;
+  font-weight: 600;
+  color: #172033;
+}
+
+.toolbar-spacer {
+  flex: 1 1 auto;
+}
+
+.page-content {
+  width: 100%;
+  max-width: 1150px;
+  margin: 0 auto;
+  padding: 40px 24px;
+}
+
+@media (max-width: 800px) {
+  mat-toolbar {
+    height: auto;
+    padding: 18px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  mat-toolbar > span:first-child {
+    width: 100%;
+    margin-bottom: 8px;
+    text-align: center;
+  }
+
+  .toolbar-spacer {
+    display: none;
+  }
+
+  mat-toolbar a {
+    flex: 1;
+    min-width: 120px;
+    text-align: center;
+  }
+
+  .page-content {
+    padding: 28px 16px;
+  }
+}
+
+@media (max-width: 500px) {
+  mat-toolbar a {
+    width: 100%;
+    flex-basis: 100%;
+  }
+}

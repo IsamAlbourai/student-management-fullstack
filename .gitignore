@@ -1,0 +1,23 @@
+# IntelliJ IDEA
+.idea/
+*.iml
+
+# Java / Maven
+student-management-backend/target/
+*.class
+
+# Angular / Node
+student-management-frontend/node_modules/
+student-management-frontend/dist/
+student-management-frontend/.angular/
+
+# Environment variables and secrets
+.env
+*.env
+
+# Logs
+*.log
+
+# Operating system files
+.DS_Store
+Thumbs.db

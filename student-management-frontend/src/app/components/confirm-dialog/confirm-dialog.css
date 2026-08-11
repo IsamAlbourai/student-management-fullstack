@@ -1,0 +1,7 @@
+p {
+  line-height: 1.6;
+}
+
+mat-dialog-content {
+  min-width: 320px;
+}

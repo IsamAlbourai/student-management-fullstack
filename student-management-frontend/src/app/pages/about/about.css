@@ -1,0 +1,16 @@
+.about-page {
+  max-width: 750px;
+}
+
+.about-page h2 {
+  margin-bottom: 20px;
+}
+
+.about-page h3 {
+  margin-top: 28px;
+}
+
+.about-page p,
+.about-page li {
+  line-height: 1.7;
+}

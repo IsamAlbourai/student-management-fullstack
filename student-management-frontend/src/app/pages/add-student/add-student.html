@@ -1,0 +1,52 @@
+<h2>Add Student</h2>
+
+<form #studentForm="ngForm" (ngSubmit)="saveStudent()">
+
+  <p>Student Name</p>
+
+  <input
+    type="text"
+    name="studentName"
+    [(ngModel)]="studentName"
+    required
+    minlength="3"
+    #nameInput="ngModel">
+
+  <p *ngIf="nameInput.invalid && nameInput.touched">
+    Name is required and must be at least 3 characters.
+  </p>
+
+  <p>Age</p>
+
+  <input
+    type="number"
+    name="studentAge"
+    [(ngModel)]="studentAge"
+    required
+    min="18"
+    #ageInput="ngModel">
+
+  <p *ngIf="ageInput.invalid && ageInput.touched">
+    Age is required and must be 18 or above.
+  </p>
+
+  <p>Course</p>
+
+  <input
+    type="text"
+    name="studentCourse"
+    [(ngModel)]="studentCourse"
+    required
+    #courseInput="ngModel">
+
+  <p *ngIf="courseInput.invalid && courseInput.touched">
+    Course is required.
+  </p>
+
+  <br><br>
+
+  <button type="submit" [disabled]="studentForm.invalid">
+    Save Student
+  </button>
+
+</form>

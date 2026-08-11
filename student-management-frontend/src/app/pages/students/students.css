@@ -1,0 +1,95 @@
+.students-page {
+  width: 100%;
+}
+
+.page-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 28px;
+}
+
+.page-heading h2 {
+  margin-bottom: 6px;
+}
+
+.page-heading p {
+  margin: 0;
+  color: #5f6673;
+}
+
+.search-section {
+  display: flex;
+  flex-direction: column;
+  width: 320px;
+  margin-bottom: 24px;
+}
+
+.search-section label {
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.search-section input {
+  padding: 12px;
+  font-size: 16px;
+  border: 1px solid #aeb4c0;
+  border-radius: 6px;
+  background-color: #ffffff;
+}
+
+.search-section input:focus {
+  border-color: #2457c5;
+  outline: 2px solid rgba(36, 87, 197, 0.15);
+}
+
+.table-container {
+  overflow-x: auto;
+  border: 1px solid #d8dce5;
+  border-radius: 10px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+}
+
+table {
+  width: 100%;
+}
+
+th {
+  font-weight: 600;
+  color: #172033;
+  background-color: #f0f3f9;
+}
+
+td,
+th {
+  padding: 16px;
+}
+
+.skills {
+  margin-top: 6px;
+  font-size: 14px;
+  color: #5f6673;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+}
+
+@media (max-width: 700px) {
+  .page-heading {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .search-section {
+    width: 100%;
+  }
+
+  .actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}
