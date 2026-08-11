@@ -2,14 +2,14 @@
 .idea/
 *.iml
 
-# Java / Maven
-student-management-backend/target/
-*.class
+# Node / Angular
+node_modules/
+dist/
+.angular/
 
-# Angular / Node
-student-management-frontend/node_modules/
-student-management-frontend/dist/
-student-management-frontend/.angular/
+# Java / Maven
+target/
+*.class
 
 # Environment variables and secrets
 .env
