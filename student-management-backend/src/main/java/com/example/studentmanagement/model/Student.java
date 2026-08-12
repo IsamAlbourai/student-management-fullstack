@@ -1,10 +1,22 @@
 package com.example.studentmanagement.model;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "students")
 public class Student {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
+    @Column(nullable = false)
     private String name;
+
+    @Column(nullable = false)
     private int age;
+
+    @Column(nullable = false)
     private String course;
 
     public Student() {
