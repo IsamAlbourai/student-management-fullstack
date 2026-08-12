@@ -1,51 +1,56 @@
 package com.example.studentmanagement.dto;
 
-public class StudentResponseDto {
+public class StudentRequestDto {
 
-    private Integer id;
     private String name;
     private int age;
     private String course;
     private Integer departmentId;
-    private String departmentName;
 
-    public StudentResponseDto(
-            Integer id,
+    public StudentRequestDto() {
+    }
+
+    public StudentRequestDto(
             String name,
             int age,
             String course,
-            Integer departmentId,
-            String departmentName) {
+            Integer departmentId) {
 
-        this.id = id;
         this.name = name;
         this.age = age;
         this.course = course;
         this.departmentId = departmentId;
-        this.departmentName = departmentName;
-    }
-
-    public Integer getId() {
-        return id;
     }
 
     public String getName() {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public int getAge() {
         return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
     }
 
     public String getCourse() {
         return course;
     }
 
+    public void setCourse(String course) {
+        this.course = course;
+    }
+
     public Integer getDepartmentId() {
         return departmentId;
     }
 
-    public String getDepartmentName() {
-        return departmentName;
+    public void setDepartmentId(Integer departmentId) {
+        this.departmentId = departmentId;
     }
 }

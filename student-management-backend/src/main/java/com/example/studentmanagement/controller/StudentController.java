@@ -1,8 +1,12 @@
 package com.example.studentmanagement.controller;
 
+import com.example.studentmanagement.dto.StudentRequestDto;
 import com.example.studentmanagement.dto.StudentResponseDto;
 import com.example.studentmanagement.exception.StudentNotFoundException;
+import com.example.studentmanagement.model.Department;
 import com.example.studentmanagement.model.Student;
+import com.example.studentmanagement.repository.DepartmentRepository;
+import com.example.studentmanagement.repository.StudentRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,117 +14,178 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("/api/students")
 public class StudentController {
 
-    @GetMapping("/api/students")
+    private final StudentRepository studentRepository;
+    private final DepartmentRepository departmentRepository;
+
+    public StudentController(
+            StudentRepository studentRepository,
+            DepartmentRepository departmentRepository) {
+
+        this.studentRepository = studentRepository;
+        this.departmentRepository = departmentRepository;
+    }
+
+    @GetMapping
     public ResponseEntity<List<StudentResponseDto>> getStudents() {
 
-        Student student1 =
-                new Student(1, "Ali", 22, "Computer Science");
-
-        Student student2 =
-                new Student(2, "Sara", 21, "Information Technology");
-
-        StudentResponseDto studentDto1 =
-                convertToDto(student1);
-
-        StudentResponseDto studentDto2 =
-                convertToDto(student2);
-
-        List<StudentResponseDto> students =
-                List.of(studentDto1, studentDto2);
+        List<StudentResponseDto> students = studentRepository
+                .findAll()
+                .stream()
+                .map(this::convertToDto)
+                .toList();
 
         return ResponseEntity.ok(students);
     }
 
-    @GetMapping("/api/students/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<StudentResponseDto> getStudentById(
-            @PathVariable int id) {
+            @PathVariable Integer id) {
 
-        if (id != 1 && id != 2) {
+        Student student = studentRepository
+                .findById(id)
+                .orElseThrow(() ->
+                        new StudentNotFoundException(
+                                "Student with ID " + id + " not found"
+                        )
+                );
+
+        return ResponseEntity.ok(convertToDto(student));
+    }
+
+    @GetMapping("/course")
+    public ResponseEntity<List<StudentResponseDto>> getStudentsByCourse(
+            @RequestParam String course) {
+
+        List<StudentResponseDto> students = studentRepository
+                .findByCourse(course)
+                .stream()
+                .map(this::convertToDto)
+                .toList();
+
+        return ResponseEntity.ok(students);
+    }
+
+    @GetMapping("/min-age")
+    public ResponseEntity<List<StudentResponseDto>> getStudentsByMinimumAge(
+            @RequestParam int age) {
+
+        List<StudentResponseDto> students = studentRepository
+                .findStudentsByMinimumAge(age)
+                .stream()
+                .map(this::convertToDto)
+                .toList();
+
+        return ResponseEntity.ok(students);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<StudentResponseDto>> searchStudentsByName(
+            @RequestParam String name) {
+
+        List<StudentResponseDto> students = studentRepository
+                .searchStudentsByName(name)
+                .stream()
+                .map(this::convertToDto)
+                .toList();
+
+        return ResponseEntity.ok(students);
+    }
+
+    @PostMapping
+    public ResponseEntity<StudentResponseDto> createStudent(
+            @RequestBody StudentRequestDto request) {
+
+        Department department = departmentRepository
+                .findById(request.getDepartmentId())
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "Department with ID "
+                                        + request.getDepartmentId()
+                                        + " not found"
+                        )
+                );
+
+        Student student = new Student(
+                null,
+                request.getName(),
+                request.getAge(),
+                request.getCourse(),
+                department
+        );
+
+        Student savedStudent =
+                studentRepository.save(student);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(convertToDto(savedStudent));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<StudentResponseDto> updateStudent(
+            @PathVariable Integer id,
+            @RequestBody StudentRequestDto request) {
+
+        Student existingStudent = studentRepository
+                .findById(id)
+                .orElseThrow(() ->
+                        new StudentNotFoundException(
+                                "Student with ID " + id + " not found"
+                        )
+                );
+
+        Department department = departmentRepository
+                .findById(request.getDepartmentId())
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "Department with ID "
+                                        + request.getDepartmentId()
+                                        + " not found"
+                        )
+                );
+
+        existingStudent.setName(request.getName());
+        existingStudent.setAge(request.getAge());
+        existingStudent.setCourse(request.getCourse());
+        existingStudent.setDepartment(department);
+
+        Student updatedStudent =
+                studentRepository.save(existingStudent);
+
+        return ResponseEntity.ok(
+                convertToDto(updatedStudent)
+        );
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteStudent(
+            @PathVariable Integer id) {
+
+        if (!studentRepository.existsById(id)) {
             throw new StudentNotFoundException(
                     "Student with ID " + id + " not found"
             );
         }
 
-        Student student;
-
-        if (id == 1) {
-            student = new Student(
-                    1,
-                    "Ali",
-                    22,
-                    "Computer Science"
-            );
-        } else {
-            student = new Student(
-                    2,
-                    "Sara",
-                    21,
-                    "Information Technology"
-            );
-        }
-
-        StudentResponseDto studentDto =
-                convertToDto(student);
-
-        return ResponseEntity.ok(studentDto);
-    }
-
-    @GetMapping("/api/students/search")
-    public ResponseEntity<String> searchStudents(
-            @RequestParam String course) {
-
-        String message =
-                "Searching for students in course: " + course;
-
-        return ResponseEntity.ok(message);
-    }
-
-    @PostMapping("/api/students")
-    public ResponseEntity<StudentResponseDto> createStudent(
-            @RequestBody Student student) {
-
-        StudentResponseDto studentDto =
-                convertToDto(student);
-
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(studentDto);
-    }
-
-    @PutMapping("/api/students/{id}")
-    public ResponseEntity<StudentResponseDto> updateStudent(
-            @PathVariable int id,
-            @RequestBody Student student) {
-
-        Student updatedStudent = new Student(
-                id,
-                student.getName(),
-                student.getAge(),
-                student.getCourse()
-        );
-
-        StudentResponseDto studentDto =
-                convertToDto(updatedStudent);
-
-        return ResponseEntity.ok(studentDto);
-    }
-
-    @DeleteMapping("/api/students/{id}")
-    public ResponseEntity<Void> deleteStudent(
-            @PathVariable int id) {
+        studentRepository.deleteById(id);
 
         return ResponseEntity.noContent().build();
     }
 
     private StudentResponseDto convertToDto(Student student) {
 
+        Department department = student.getDepartment();
+
         return new StudentResponseDto(
                 student.getId(),
                 student.getName(),
                 student.getAge(),
-                student.getCourse()
+                student.getCourse(),
+                department != null ? department.getId() : null,
+                department != null ? department.getName() : null
         );
     }
 }

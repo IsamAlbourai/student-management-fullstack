@@ -19,14 +19,28 @@ public class Student {
     @Column(nullable = false)
     private String course;
 
+    @ManyToOne
+    @JoinColumn(name = "department_id")
+    private Department department;
+
+    @OneToOne(mappedBy = "student")
+    private StudentProfile profile;
+
     public Student() {
     }
 
-    public Student(Integer id, String name, int age, String course) {
+    public Student(
+            Integer id,
+            String name,
+            int age,
+            String course,
+            Department department) {
+
         this.id = id;
         this.name = name;
         this.age = age;
         this.course = course;
+        this.department = department;
     }
 
     public Integer getId() {
@@ -59,5 +73,21 @@ public class Student {
 
     public void setCourse(String course) {
         this.course = course;
+    }
+
+    public Department getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(Department department) {
+        this.department = department;
+    }
+
+    public StudentProfile getProfile() {
+        return profile;
+    }
+
+    public void setProfile(StudentProfile profile) {
+        this.profile = profile;
     }
 }
