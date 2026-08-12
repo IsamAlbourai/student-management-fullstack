@@ -2,11 +2,9 @@ package com.example.studentmanagement.controller;
 
 import com.example.studentmanagement.dto.StudentRequestDto;
 import com.example.studentmanagement.dto.StudentResponseDto;
-import com.example.studentmanagement.exception.StudentNotFoundException;
 import com.example.studentmanagement.model.Department;
 import com.example.studentmanagement.model.Student;
-import com.example.studentmanagement.repository.DepartmentRepository;
-import com.example.studentmanagement.repository.StudentRepository;
+import com.example.studentmanagement.service.StudentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,22 +15,17 @@ import java.util.List;
 @RequestMapping("/api/students")
 public class StudentController {
 
-    private final StudentRepository studentRepository;
-    private final DepartmentRepository departmentRepository;
+    private final StudentService studentService;
 
-    public StudentController(
-            StudentRepository studentRepository,
-            DepartmentRepository departmentRepository) {
-
-        this.studentRepository = studentRepository;
-        this.departmentRepository = departmentRepository;
+    public StudentController(StudentService studentService) {
+        this.studentService = studentService;
     }
 
     @GetMapping
     public ResponseEntity<List<StudentResponseDto>> getStudents() {
 
-        List<StudentResponseDto> students = studentRepository
-                .findAll()
+        List<StudentResponseDto> students = studentService
+                .getAllStudents()
                 .stream()
                 .map(this::convertToDto)
                 .toList();
@@ -44,23 +37,20 @@ public class StudentController {
     public ResponseEntity<StudentResponseDto> getStudentById(
             @PathVariable Integer id) {
 
-        Student student = studentRepository
-                .findById(id)
-                .orElseThrow(() ->
-                        new StudentNotFoundException(
-                                "Student with ID " + id + " not found"
-                        )
-                );
+        Student student =
+                studentService.getStudentById(id);
 
-        return ResponseEntity.ok(convertToDto(student));
+        return ResponseEntity.ok(
+                convertToDto(student)
+        );
     }
 
     @GetMapping("/course")
     public ResponseEntity<List<StudentResponseDto>> getStudentsByCourse(
             @RequestParam String course) {
 
-        List<StudentResponseDto> students = studentRepository
-                .findByCourse(course)
+        List<StudentResponseDto> students = studentService
+                .getStudentsByCourse(course)
                 .stream()
                 .map(this::convertToDto)
                 .toList();
@@ -72,8 +62,8 @@ public class StudentController {
     public ResponseEntity<List<StudentResponseDto>> getStudentsByMinimumAge(
             @RequestParam int age) {
 
-        List<StudentResponseDto> students = studentRepository
-                .findStudentsByMinimumAge(age)
+        List<StudentResponseDto> students = studentService
+                .getStudentsByMinimumAge(age)
                 .stream()
                 .map(this::convertToDto)
                 .toList();
@@ -85,7 +75,7 @@ public class StudentController {
     public ResponseEntity<List<StudentResponseDto>> searchStudentsByName(
             @RequestParam String name) {
 
-        List<StudentResponseDto> students = studentRepository
+        List<StudentResponseDto> students = studentService
                 .searchStudentsByName(name)
                 .stream()
                 .map(this::convertToDto)
@@ -98,26 +88,13 @@ public class StudentController {
     public ResponseEntity<StudentResponseDto> createStudent(
             @RequestBody StudentRequestDto request) {
 
-        Department department = departmentRepository
-                .findById(request.getDepartmentId())
-                .orElseThrow(() ->
-                        new RuntimeException(
-                                "Department with ID "
-                                        + request.getDepartmentId()
-                                        + " not found"
-                        )
-                );
-
-        Student student = new Student(
-                null,
-                request.getName(),
-                request.getAge(),
-                request.getCourse(),
-                department
-        );
-
         Student savedStudent =
-                studentRepository.save(student);
+                studentService.createStudent(
+                        request.getName(),
+                        request.getAge(),
+                        request.getCourse(),
+                        request.getDepartmentId()
+                );
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -129,31 +106,14 @@ public class StudentController {
             @PathVariable Integer id,
             @RequestBody StudentRequestDto request) {
 
-        Student existingStudent = studentRepository
-                .findById(id)
-                .orElseThrow(() ->
-                        new StudentNotFoundException(
-                                "Student with ID " + id + " not found"
-                        )
-                );
-
-        Department department = departmentRepository
-                .findById(request.getDepartmentId())
-                .orElseThrow(() ->
-                        new RuntimeException(
-                                "Department with ID "
-                                        + request.getDepartmentId()
-                                        + " not found"
-                        )
-                );
-
-        existingStudent.setName(request.getName());
-        existingStudent.setAge(request.getAge());
-        existingStudent.setCourse(request.getCourse());
-        existingStudent.setDepartment(department);
-
         Student updatedStudent =
-                studentRepository.save(existingStudent);
+                studentService.updateStudent(
+                        id,
+                        request.getName(),
+                        request.getAge(),
+                        request.getCourse(),
+                        request.getDepartmentId()
+                );
 
         return ResponseEntity.ok(
                 convertToDto(updatedStudent)
@@ -164,13 +124,7 @@ public class StudentController {
     public ResponseEntity<Void> deleteStudent(
             @PathVariable Integer id) {
 
-        if (!studentRepository.existsById(id)) {
-            throw new StudentNotFoundException(
-                    "Student with ID " + id + " not found"
-            );
-        }
-
-        studentRepository.deleteById(id);
+        studentService.deleteStudent(id);
 
         return ResponseEntity.noContent().build();
     }
