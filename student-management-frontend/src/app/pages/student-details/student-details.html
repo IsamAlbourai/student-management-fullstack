@@ -1,18 +1,34 @@
-<h2>Student Details</h2>
+<h2>
+  Student Details
+</h2>
 
-@if (isLoading()) {
+@if (
+  isLoading()
+  ) {
 
-  <p>Loading student details...</p>
+  <p>
+    Loading student details...
+  </p>
 
-} @else if (errorMessage()) {
+} @else if (
+  errorMessage()
+  ) {
 
-  <p>{{ errorMessage() }}</p>
+  <p>
+    {{ errorMessage() }}
+  </p>
 
-} @else if (student(); as selectedStudent) {
+} @else if (
+  student();
+  as selectedStudent
+  ) {
 
   <app-student-card
     [student]="selectedStudent"
-    (deleteRequested)="deleteStudent($event)">
+    [canDelete]="authService.isAdmin()"
+    (deleteRequested)="
+      deleteStudent($event)
+    ">
   </app-student-card>
 
 }

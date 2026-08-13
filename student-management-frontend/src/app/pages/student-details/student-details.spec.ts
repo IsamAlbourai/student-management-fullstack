@@ -1,14 +1,22 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+
 import { ActivatedRoute, convertToParamMap, provideRouter, Router } from '@angular/router';
+
 import { of } from 'rxjs';
 
 import { StudentDetails } from './student-details';
+
 import { Student } from '../../models/student';
+
 import { StudentService } from '../../services/student.service';
+
+import { AuthService } from '../../services/auth.service';
 
 describe('StudentDetails', () => {
   let component: StudentDetails;
+
   let fixture: ComponentFixture<StudentDetails>;
+
   let router: Router;
 
   const mockStudent: Student = {
@@ -16,12 +24,18 @@ describe('StudentDetails', () => {
     name: 'Sam',
     age: 22,
     course: 'Information Technology',
-    skills: ['Angular', 'Java'],
+    departmentId: 1,
+    departmentName: 'Computer Science',
   };
 
   const mockStudentService = {
     getStudentById: () => of(mockStudent),
+
     deleteStudent: () => of(undefined),
+  };
+
+  const mockAuthService = {
+    isAdmin: () => true,
   };
 
   const mockActivatedRoute = {
@@ -35,21 +49,34 @@ describe('StudentDetails', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [StudentDetails],
+
       providers: [
         provideRouter([]),
+
         {
           provide: ActivatedRoute,
+
           useValue: mockActivatedRoute,
         },
+
         {
           provide: StudentService,
+
           useValue: mockStudentService,
+        },
+
+        {
+          provide: AuthService,
+
+          useValue: mockAuthService,
         },
       ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(StudentDetails);
+
     component = fixture.componentInstance;
+
     router = TestBed.inject(Router);
 
     fixture.detectChanges();
@@ -61,7 +88,9 @@ describe('StudentDetails', () => {
 
   it('should load the student using the route ID', () => {
     expect(component.student()?.id).toBe(1);
+
     expect(component.student()?.name).toBe('Sam');
+
     expect(component.student()?.course).toBe('Information Technology');
   });
 
@@ -69,9 +98,14 @@ describe('StudentDetails', () => {
     const element: HTMLElement = fixture.nativeElement;
 
     expect(element.textContent).toContain('Sam');
+
     expect(element.textContent).toContain('22');
+
     expect(element.textContent).toContain('Information Technology');
-    expect(element.textContent).toContain('Angular, Java');
+
+    expect(element.textContent).toContain('Computer Science');
+
+    expect(element.textContent).toContain('Delete Student');
   });
 
   it('should delete the student and navigate back', () => {

@@ -5,6 +5,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Student } from '../../models/student';
 
 import { StudentService } from '../../services/student.service';
+import { AuthService } from '../../services/auth.service';
 
 import { StudentCard } from '../../components/student-card/student-card';
 
@@ -27,6 +28,7 @@ export class StudentDetails implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private studentService: StudentService,
+    public authService: AuthService,
   ) {}
 
   ngOnInit(): void {
@@ -56,6 +58,10 @@ export class StudentDetails implements OnInit {
   }
 
   deleteStudent(id: number): void {
+    if (!this.authService.isAdmin()) {
+      return;
+    }
+
     this.studentService.deleteStudent(id).subscribe({
       next: () => {
         this.router.navigate(['/students']);

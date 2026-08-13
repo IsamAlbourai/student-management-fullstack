@@ -1,15 +1,22 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+
 import { provideRouter } from '@angular/router';
+
 import { of } from 'rxjs';
 
 import { MatDialog } from '@angular/material/dialog';
 
 import { Students } from './students';
+
 import { Student } from '../../models/student';
+
 import { StudentService } from '../../services/student.service';
+
+import { AuthService } from '../../services/auth.service';
 
 describe('Students', () => {
   let component: Students;
+
   let fixture: ComponentFixture<Students>;
 
   const mockStudents: Student[] = [
@@ -18,19 +25,23 @@ describe('Students', () => {
       name: 'Sam',
       age: 22,
       course: 'Information Technology',
-      skills: ['Angular', 'Java'],
+      departmentId: 1,
+      departmentName: 'Computer Science',
     },
+
     {
       id: 2,
       name: 'John',
       age: 20,
       course: 'Computer Science',
-      skills: ['Python'],
+      departmentId: 1,
+      departmentName: 'Computer Science',
     },
   ];
 
   const mockStudentService = {
     getStudents: () => of(mockStudents),
+
     deleteStudent: () => of(undefined),
   };
 
@@ -40,23 +51,39 @@ describe('Students', () => {
     }),
   };
 
+  const mockAuthService = {
+    isAdmin: () => true,
+  };
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [Students],
+
       providers: [
         provideRouter([]),
+
         {
           provide: StudentService,
+
           useValue: mockStudentService,
         },
+
         {
           provide: MatDialog,
+
           useValue: mockDialog,
+        },
+
+        {
+          provide: AuthService,
+
+          useValue: mockAuthService,
         },
       ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(Students);
+
     component = fixture.componentInstance;
 
     fixture.detectChanges();
@@ -68,6 +95,7 @@ describe('Students', () => {
 
   it('should load students from the service', () => {
     expect(component.students().length).toBe(2);
+
     expect(component.students()[0].name).toBe('Sam');
   });
 
@@ -75,9 +103,16 @@ describe('Students', () => {
     const element: HTMLElement = fixture.nativeElement;
 
     expect(element.textContent).toContain('Sam');
+
     expect(element.textContent).toContain('John');
+
     expect(element.textContent).toContain('Information Technology');
+
     expect(element.textContent).toContain('Computer Science');
+
+    expect(element.textContent).toContain('Edit');
+
+    expect(element.textContent).toContain('Delete');
   });
 
   it('should filter students by name', () => {
@@ -86,6 +121,7 @@ describe('Students', () => {
     const filteredStudents = component.getFilteredStudents();
 
     expect(filteredStudents.length).toBe(1);
+
     expect(filteredStudents[0].name).toBe('Sam');
   });
 
@@ -95,6 +131,7 @@ describe('Students', () => {
     const filteredStudents = component.getFilteredStudents();
 
     expect(filteredStudents.length).toBe(1);
+
     expect(filteredStudents[0].name).toBe('John');
   });
 });

@@ -24,12 +24,16 @@
     {{ student.departmentName }}
   </p>
 
-  <button
-    type="button"
-    (click)="requestDelete()">
+  @if (canDelete) {
 
-    Delete Student
+    <button
+      type="button"
+      (click)="requestDelete()">
 
-  </button>
+      Delete Student
+
+    </button>
+
+  }
 
 </div>

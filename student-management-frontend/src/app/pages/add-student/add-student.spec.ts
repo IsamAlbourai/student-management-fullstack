@@ -1,13 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+
 import { provideRouter, Router } from '@angular/router';
+
 import { of } from 'rxjs';
 
 import { AddStudent } from './add-student';
+
 import { StudentService } from '../../services/student.service';
 
 describe('AddStudent', () => {
   let component: AddStudent;
+
   let fixture: ComponentFixture<AddStudent>;
+
   let router: Router;
 
   const mockStudentService = {
@@ -17,24 +22,30 @@ describe('AddStudent', () => {
         name: 'Sam',
         age: 22,
         course: 'Information Technology',
-        skills: [],
+        departmentId: 1,
+        departmentName: 'Computer Science',
       }),
   };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [AddStudent],
+
       providers: [
         provideRouter([]),
+
         {
           provide: StudentService,
+
           useValue: mockStudentService,
         },
       ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(AddStudent);
+
     component = fixture.componentInstance;
+
     router = TestBed.inject(Router);
 
     fixture.detectChanges();
@@ -46,14 +57,22 @@ describe('AddStudent', () => {
 
   it('should begin with the expected default values', () => {
     expect(component.studentName).toBe('');
+
     expect(component.studentAge).toBe(18);
+
     expect(component.studentCourse).toBe('');
+
+    expect(component.departmentId).toBe(1);
   });
 
   it('should add a student and navigate to students', () => {
     component.studentName = 'Sam';
+
     component.studentAge = 22;
+
     component.studentCourse = 'Information Technology';
+
+    component.departmentId = 1;
 
     const addSpy = vi.spyOn(mockStudentService, 'addStudent');
 
@@ -62,11 +81,10 @@ describe('AddStudent', () => {
     component.saveStudent();
 
     expect(addSpy).toHaveBeenCalledWith({
-      id: '',
       name: 'Sam',
       age: 22,
       course: 'Information Technology',
-      skills: [],
+      departmentId: 1,
     });
 
     expect(navigateSpy).toHaveBeenCalledWith(['/students']);
