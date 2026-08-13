@@ -1,6 +1,9 @@
 package com.example.studentmanagement.config;
 
+import com.example.studentmanagement.security.JwtAuthenticationEntryPoint;
 import com.example.studentmanagement.security.JwtAuthenticationFilter;
+import jakarta.servlet.DispatcherType;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -58,7 +61,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http,
-            JwtAuthenticationFilter jwtAuthenticationFilter)
+            JwtAuthenticationFilter jwtAuthenticationFilter,
+            JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint)
             throws Exception {
 
         http
@@ -72,7 +76,25 @@ public class SecurityConfig {
                         )
                 )
 
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(
+                                jwtAuthenticationEntryPoint
+                        )
+                        .accessDeniedHandler(
+                                (request, response, accessDeniedException) -> {
+                                    response.setStatus(
+                                            HttpServletResponse.SC_FORBIDDEN
+                                    );
+                                }
+                        )
+                )
+
                 .authorizeHttpRequests(auth -> auth
+
+                        .dispatcherTypeMatchers(
+                                DispatcherType.ERROR
+                        )
+                        .permitAll()
 
                         .requestMatchers("/api/auth/**")
                         .permitAll()
