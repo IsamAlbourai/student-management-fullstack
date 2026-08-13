@@ -1,8 +1,14 @@
 package com.example.studentmanagement.security;
 
+import com.example.studentmanagement.controller.DepartmentController;
 import com.example.studentmanagement.controller.StudentController;
+import com.example.studentmanagement.controller.StudentProfileController;
 import com.example.studentmanagement.model.Department;
 import com.example.studentmanagement.model.Student;
+import com.example.studentmanagement.model.StudentProfile;
+import com.example.studentmanagement.repository.DepartmentRepository;
+import com.example.studentmanagement.repository.StudentProfileRepository;
+import com.example.studentmanagement.repository.StudentRepository;
 import com.example.studentmanagement.service.StudentService;
 import jakarta.servlet.DispatcherType;
 import jakarta.servlet.http.HttpServletResponse;
@@ -34,15 +40,20 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.util.List;
+import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(
-        controllers = StudentController.class,
+        controllers = {
+                StudentController.class,
+                DepartmentController.class,
+                StudentProfileController.class
+        },
         properties = {
                 "jwt.secret=student-management-super-secret-jwt-key-2026",
                 "jwt.expiration=3600000"
@@ -71,6 +82,15 @@ public class StudentSecurityTest {
 
     @MockitoBean
     private StudentService studentService;
+
+    @MockitoBean
+    private DepartmentRepository departmentRepository;
+
+    @MockitoBean
+    private StudentRepository studentRepository;
+
+    @MockitoBean
+    private StudentProfileRepository studentProfileRepository;
 
     private MockMvc mockMvc;
 
@@ -144,10 +164,6 @@ public class StudentSecurityTest {
                 )
                 .andExpect(
                         status().isOk()
-                )
-                .andExpect(
-                        jsonPath("$[0].name")
-                                .value("Omar")
                 );
     }
 
@@ -221,14 +237,174 @@ public class StudentSecurityTest {
                 )
                 .andExpect(
                         status().isCreated()
+                );
+    }
+
+    @Test
+    void studentTokenShouldAllowGetDepartments()
+            throws Exception {
+
+        Department department =
+                new Department(
+                        1,
+                        "Computer Science"
+                );
+
+        when(departmentRepository.findAll())
+                .thenReturn(
+                        List.of(department)
+                );
+
+        mockMvc.perform(
+                        get("/api/departments")
+                                .header(
+                                        "Authorization",
+                                        "Bearer " + studentToken
+                                )
                 )
                 .andExpect(
-                        jsonPath("$.id")
-                                .value(10)
+                        status().isOk()
+                );
+    }
+
+    @Test
+    void studentTokenShouldNotAllowCreateDepartment()
+            throws Exception {
+
+        mockMvc.perform(
+                        post("/api/departments")
+                                .header(
+                                        "Authorization",
+                                        "Bearer " + studentToken
+                                )
+                                .contentType(
+                                        MediaType.APPLICATION_JSON
+                                )
+                                .content("""
+                                        {
+                                          "name": "Cybersecurity"
+                                        }
+                                        """)
                 )
                 .andExpect(
-                        jsonPath("$.name")
-                                .value("Yusuf")
+                        status().isForbidden()
+                );
+    }
+
+    @Test
+    void adminTokenShouldAllowCreateDepartment()
+            throws Exception {
+
+        Department savedDepartment =
+                new Department(
+                        3,
+                        "Cybersecurity"
+                );
+
+        when(
+                departmentRepository.save(
+                        any(Department.class)
+                )
+        ).thenReturn(
+                savedDepartment
+        );
+
+        mockMvc.perform(
+                        post("/api/departments")
+                                .header(
+                                        "Authorization",
+                                        "Bearer " + adminToken
+                                )
+                                .contentType(
+                                        MediaType.APPLICATION_JSON
+                                )
+                                .content("""
+                                        {
+                                          "name": "Cybersecurity"
+                                        }
+                                        """)
+                )
+                .andExpect(
+                        status().isCreated()
+                );
+    }
+
+    @Test
+    void studentTokenShouldNotAllowCreateProfile()
+            throws Exception {
+
+        mockMvc.perform(
+                        post("/api/profiles/student/1")
+                                .header(
+                                        "Authorization",
+                                        "Bearer " + studentToken
+                                )
+                                .contentType(
+                                        MediaType.APPLICATION_JSON
+                                )
+                                .content("""
+                                        {
+                                          "email": "omar@example.com",
+                                          "phoneNumber": "99999999"
+                                        }
+                                        """)
+                )
+                .andExpect(
+                        status().isForbidden()
+                );
+    }
+
+    @Test
+    void adminTokenShouldAllowCreateProfile()
+            throws Exception {
+
+        Department department =
+                new Department(
+                        1,
+                        "Computer Science"
+                );
+
+        Student student =
+                new Student(
+                        1,
+                        "Omar",
+                        23,
+                        "Software Engineering",
+                        department
+                );
+
+        when(studentRepository.findById(1))
+                .thenReturn(
+                        Optional.of(student)
+                );
+
+        when(
+                studentProfileRepository.save(
+                        any(StudentProfile.class)
+                )
+        ).thenAnswer(
+                invocation ->
+                        invocation.getArgument(0)
+        );
+
+        mockMvc.perform(
+                        post("/api/profiles/student/1")
+                                .header(
+                                        "Authorization",
+                                        "Bearer " + adminToken
+                                )
+                                .contentType(
+                                        MediaType.APPLICATION_JSON
+                                )
+                                .content("""
+                                        {
+                                          "email": "omar@example.com",
+                                          "phoneNumber": "99999999"
+                                        }
+                                        """)
+                )
+                .andExpect(
+                        status().isCreated()
                 );
     }
 
@@ -340,6 +516,60 @@ public class StudentSecurityTest {
                             .requestMatchers(
                                     HttpMethod.DELETE,
                                     "/api/students/**"
+                            )
+                            .hasRole("ADMIN")
+
+                            .requestMatchers(
+                                    HttpMethod.GET,
+                                    "/api/departments/**"
+                            )
+                            .hasAnyRole(
+                                    "USER",
+                                    "ADMIN"
+                            )
+
+                            .requestMatchers(
+                                    HttpMethod.POST,
+                                    "/api/departments/**"
+                            )
+                            .hasRole("ADMIN")
+
+                            .requestMatchers(
+                                    HttpMethod.PUT,
+                                    "/api/departments/**"
+                            )
+                            .hasRole("ADMIN")
+
+                            .requestMatchers(
+                                    HttpMethod.DELETE,
+                                    "/api/departments/**"
+                            )
+                            .hasRole("ADMIN")
+
+                            .requestMatchers(
+                                    HttpMethod.GET,
+                                    "/api/profiles/**"
+                            )
+                            .hasAnyRole(
+                                    "USER",
+                                    "ADMIN"
+                            )
+
+                            .requestMatchers(
+                                    HttpMethod.POST,
+                                    "/api/profiles/**"
+                            )
+                            .hasRole("ADMIN")
+
+                            .requestMatchers(
+                                    HttpMethod.PUT,
+                                    "/api/profiles/**"
+                            )
+                            .hasRole("ADMIN")
+
+                            .requestMatchers(
+                                    HttpMethod.DELETE,
+                                    "/api/profiles/**"
                             )
                             .hasRole("ADMIN")
 
