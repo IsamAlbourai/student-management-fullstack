@@ -1,17 +1,15 @@
 export interface Student {
-  id: number | string;
-
+  id: number;
   name: string;
-
   age: number;
-
   course: string;
+  departmentId: number | null;
+  departmentName: string | null;
+}
 
-  departmentId?: number | null;
-
-  departmentName?: string | null;
-
-  // Temporary compatibility with the older Angular forms.
-  // We will remove this during Step 4.
-  skills?: string[];
+export interface StudentRequest {
+  name: string;
+  age: number;
+  course: string;
+  departmentId: number;
 }

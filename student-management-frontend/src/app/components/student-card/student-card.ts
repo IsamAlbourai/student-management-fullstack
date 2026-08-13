@@ -9,9 +9,11 @@ import { Student } from '../../models/student';
   styleUrl: './student-card.css',
 })
 export class StudentCard {
-  @Input() student!: Student;
+  @Input()
+  student!: Student;
 
-  @Output() deleteRequested = new EventEmitter<number | string>();
+  @Output()
+  deleteRequested = new EventEmitter<number>();
 
   requestDelete(): void {
     this.deleteRequested.emit(this.student.id);

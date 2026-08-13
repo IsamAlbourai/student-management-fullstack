@@ -1,38 +1,113 @@
-<h2>Edit Student</h2>
+<h2>
+  Edit Student
+</h2>
 
-<form (ngSubmit)="updateStudent()">
+@if (
+  errorMessage()
+  ) {
 
-  <p>Student Name</p>
+  <p>
+    {{ errorMessage() }}
+  </p>
+
+}
+
+<form
+  (ngSubmit)="updateStudent()">
+
+  <p>
+    Student Name
+  </p>
 
   <input
     type="text"
     name="name"
     [ngModel]="student().name"
-    (ngModelChange)="student.update(s => ({ ...s, name: $event }))"
+    (ngModelChange)="
+      student.update(
+        s => ({
+          ...s,
+          name: $event
+        })
+      )
+    "
     required>
 
-  <p>Age</p>
+  <p>
+    Age
+  </p>
 
   <input
     type="number"
     name="age"
     [ngModel]="student().age"
-    (ngModelChange)="student.update(s => ({ ...s, age: +$event }))"
-    required>
+    (ngModelChange)="
+      student.update(
+        s => ({
+          ...s,
+          age: +$event
+        })
+      )
+    "
+    required
+    min="18"
+    max="120">
 
-  <p>Course</p>
+  <p>
+    Course
+  </p>
 
   <input
     type="text"
     name="course"
     [ngModel]="student().course"
-    (ngModelChange)="student.update(s => ({ ...s, course: $event }))"
+    (ngModelChange)="
+      student.update(
+        s => ({
+          ...s,
+          course: $event
+        })
+      )
+    "
     required>
+
+  <p>
+    Department ID
+  </p>
+
+  <input
+    type="number"
+    name="departmentId"
+    [ngModel]="student().departmentId"
+    (ngModelChange)="
+      student.update(
+        s => ({
+          ...s,
+          departmentId: +$event
+        })
+      )
+    "
+    required
+    min="1">
 
   <br><br>
 
-  <button type="submit">
-    Update Student
+  <button
+    type="submit"
+    [disabled]="saving()">
+
+    @if (
+      saving()
+      ) {
+
+      Updating...
+
+    } @else {
+
+      Update Student
+
+    }
+
   </button>
 
 </form>

@@ -103,7 +103,7 @@ export class Students implements OnInit {
     });
   }
 
-  deleteStudent(id: number | string): void {
+  deleteStudent(id: number): void {
     this.studentService.deleteStudent(id).subscribe({
       next: () => {
         this.loadStudents();

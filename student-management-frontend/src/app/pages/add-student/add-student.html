@@ -1,8 +1,14 @@
-<h2>Add Student</h2>
+<h2>
+  Add Student
+</h2>
 
-<form #studentForm="ngForm" (ngSubmit)="saveStudent()">
+<form
+  #studentForm="ngForm"
+  (ngSubmit)="saveStudent()">
 
-  <p>Student Name</p>
+  <p>
+    Student Name
+  </p>
 
   <input
     type="text"
@@ -12,11 +18,20 @@
     minlength="3"
     #nameInput="ngModel">
 
-  <p *ngIf="nameInput.invalid && nameInput.touched">
+  <p
+    *ngIf="
+      nameInput.invalid
+      &&
+      nameInput.touched
+    ">
+
     Name is required and must be at least 3 characters.
+
   </p>
 
-  <p>Age</p>
+  <p>
+    Age
+  </p>
 
   <input
     type="number"
@@ -24,13 +39,23 @@
     [(ngModel)]="studentAge"
     required
     min="18"
+    max="120"
     #ageInput="ngModel">
 
-  <p *ngIf="ageInput.invalid && ageInput.touched">
-    Age is required and must be 18 or above.
+  <p
+    *ngIf="
+      ageInput.invalid
+      &&
+      ageInput.touched
+    ">
+
+    Age must be between 18 and 120.
+
   </p>
 
-  <p>Course</p>
+  <p>
+    Course
+  </p>
 
   <input
     type="text"
@@ -39,14 +64,48 @@
     required
     #courseInput="ngModel">
 
-  <p *ngIf="courseInput.invalid && courseInput.touched">
+  <p
+    *ngIf="
+      courseInput.invalid
+      &&
+      courseInput.touched
+    ">
+
     Course is required.
+
+  </p>
+
+  <p>
+    Department ID
+  </p>
+
+  <input
+    type="number"
+    name="departmentId"
+    [(ngModel)]="departmentId"
+    required
+    min="1"
+    #departmentInput="ngModel">
+
+  <p
+    *ngIf="
+      departmentInput.invalid
+      &&
+      departmentInput.touched
+    ">
+
+    Department ID is required.
+
   </p>
 
   <br><br>
 
-  <button type="submit" [disabled]="studentForm.invalid">
+  <button
+    type="submit"
+    [disabled]="studentForm.invalid">
+
     Save Student
+
   </button>
 
 </form>
