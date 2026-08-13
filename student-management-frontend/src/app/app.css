@@ -16,6 +16,14 @@ mat-toolbar > span:first-child {
   flex: 1 1 auto;
 }
 
+.user-info {
+  margin-left: 16px;
+  margin-right: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #555b69;
+}
+
 .page-content {
   width: 100%;
   max-width: 1150px;
@@ -24,6 +32,7 @@ mat-toolbar > span:first-child {
 }
 
 @media (max-width: 800px) {
+
   mat-toolbar {
     height: auto;
     padding: 18px;
@@ -41,9 +50,16 @@ mat-toolbar > span:first-child {
     display: none;
   }
 
-  mat-toolbar a {
+  mat-toolbar a,
+  mat-toolbar button {
     flex: 1;
     min-width: 120px;
+    text-align: center;
+  }
+
+  .user-info {
+    flex-basis: 100%;
+    margin: 8px 0;
     text-align: center;
   }
 
@@ -53,7 +69,9 @@ mat-toolbar > span:first-child {
 }
 
 @media (max-width: 500px) {
-  mat-toolbar a {
+
+  mat-toolbar a,
+  mat-toolbar button {
     width: 100%;
     flex-basis: 100%;
   }

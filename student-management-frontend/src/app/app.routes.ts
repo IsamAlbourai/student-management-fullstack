@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 
 import { authGuard } from './guards/auth-guard';
+import { adminGuard } from './guards/admin-guard';
 
 import { Dashboard } from './pages/dashboard/dashboard';
 import { Students } from './pages/students/students';
@@ -15,35 +16,47 @@ export const routes: Routes = [
     redirectTo: 'dashboard',
     pathMatch: 'full',
   },
+
   {
     path: 'login',
     component: Login,
   },
+
   {
     path: 'dashboard',
     component: Dashboard,
+    canActivate: [authGuard],
   },
+
   {
     path: 'students',
     component: Students,
+    canActivate: [authGuard],
   },
+
   {
     path: 'students/:id/edit',
     component: EditStudent,
+    canActivate: [adminGuard],
   },
+
   {
     path: 'students/:id',
     component: StudentDetails,
+    canActivate: [authGuard],
   },
+
   {
     path: 'add-student',
     component: ReactiveForm,
-    canActivate: [authGuard],
+    canActivate: [adminGuard],
   },
+
   {
     path: 'about',
     loadComponent: () => import('./pages/about/about').then((module) => module.About),
   },
+
   {
     path: '**',
     redirectTo: 'dashboard',

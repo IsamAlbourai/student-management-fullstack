@@ -21,7 +21,9 @@
 
     } @else {
 
-      <p>Loading dashboard...</p>
+      <p>
+        Loading dashboard...
+      </p>
 
     }
 
@@ -30,14 +32,24 @@
       <a
         mat-stroked-button
         routerLink="/students">
+
         View Students
+
       </a>
 
-      <a
-        mat-flat-button
-        routerLink="/add-student">
-        Add Student
-      </a>
+      @if (
+        authService.isAdmin()
+        ) {
+
+        <a
+          mat-flat-button
+          routerLink="/add-student">
+
+          Add Student
+
+        </a>
+
+      }
 
     </div>
 
@@ -58,15 +70,23 @@
       <a
         mat-stroked-button
         routerLink="/students"
-        [queryParams]="{ course: 'Computer Science' }">
+        [queryParams]="{
+          course: 'Computer Science'
+        }">
+
         Computer Science
+
       </a>
 
       <a
         mat-stroked-button
         routerLink="/students"
-        [queryParams]="{ course: 'Information Technology' }">
+        [queryParams]="{
+          course: 'Information Technology'
+        }">
+
         Information Technology
+
       </a>
 
     </div>

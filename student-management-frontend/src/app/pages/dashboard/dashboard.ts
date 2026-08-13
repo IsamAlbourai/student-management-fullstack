@@ -7,6 +7,7 @@ import { MatButtonModule } from '@angular/material/button';
 
 import { Student } from '../../models/student';
 import { StudentService } from '../../services/student.service';
+import { AuthService } from '../../services/auth.service';
 import { PageCard } from '../../components/page-card/page-card';
 
 @Component({
@@ -18,7 +19,10 @@ import { PageCard } from '../../components/page-card/page-card';
 export class Dashboard {
   students$: Observable<Student[]>;
 
-  constructor(private studentService: StudentService) {
+  constructor(
+    private studentService: StudentService,
+    public authService: AuthService,
+  ) {
     this.students$ = this.studentService.getStudents();
   }
 }
