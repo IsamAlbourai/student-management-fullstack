@@ -5,6 +5,7 @@ import com.example.studentmanagement.dto.StudentResponseDto;
 import com.example.studentmanagement.model.Department;
 import com.example.studentmanagement.model.Student;
 import com.example.studentmanagement.service.StudentService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -86,7 +87,7 @@ public class StudentController {
 
     @PostMapping
     public ResponseEntity<StudentResponseDto> createStudent(
-            @RequestBody StudentRequestDto request) {
+            @Valid @RequestBody StudentRequestDto request) {
 
         Student savedStudent =
                 studentService.createStudent(
@@ -104,7 +105,7 @@ public class StudentController {
     @PutMapping("/{id}")
     public ResponseEntity<StudentResponseDto> updateStudent(
             @PathVariable Integer id,
-            @RequestBody StudentRequestDto request) {
+            @Valid @RequestBody StudentRequestDto request) {
 
         Student updatedStudent =
                 studentService.updateStudent(
