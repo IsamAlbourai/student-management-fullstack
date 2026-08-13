@@ -7,12 +7,17 @@ import { Students } from './pages/students/students';
 import { StudentDetails } from './pages/student-details/student-details';
 import { EditStudent } from './pages/edit-student/edit-student';
 import { ReactiveForm } from './pages/reactive-form/reactive-form';
+import { Login } from './pages/login/login';
 
 export const routes: Routes = [
   {
     path: '',
     redirectTo: 'dashboard',
     pathMatch: 'full',
+  },
+  {
+    path: 'login',
+    component: Login,
   },
   {
     path: 'dashboard',

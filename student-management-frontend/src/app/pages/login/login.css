@@ -1,0 +1,33 @@
+.login-page {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 80px;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 420px;
+  padding: 20px;
+}
+
+.full-width {
+  width: 100%;
+  margin-top: 12px;
+}
+
+.login-button {
+  width: 100%;
+  margin-top: 16px;
+  min-height: 44px;
+}
+
+.error-message {
+  margin-top: 8px;
+  margin-bottom: 8px;
+  color: #b00020;
+}
+
+mat-spinner {
+  margin: 0 auto;
+}
