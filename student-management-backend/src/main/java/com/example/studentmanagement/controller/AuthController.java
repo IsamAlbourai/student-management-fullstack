@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,8 +22,11 @@ public class AuthController {
             AuthenticationManager authenticationManager,
             JwtService jwtService) {
 
-        this.authenticationManager = authenticationManager;
-        this.jwtService = jwtService;
+        this.authenticationManager =
+                authenticationManager;
+
+        this.jwtService =
+                jwtService;
     }
 
     @PostMapping("/login")
@@ -43,8 +47,25 @@ public class AuthController {
         String token =
                 jwtService.generateToken(userDetails);
 
+        String role =
+                userDetails.getAuthorities()
+                        .stream()
+                        .map(GrantedAuthority::getAuthority)
+                        .findFirst()
+                        .map(authority ->
+                                authority.replace(
+                                        "ROLE_",
+                                        ""
+                                )
+                        )
+                        .orElse("USER");
+
         return ResponseEntity.ok(
-                new LoginResponseDto(token)
+                new LoginResponseDto(
+                        token,
+                        userDetails.getUsername(),
+                        role
+                )
         );
     }
 }
