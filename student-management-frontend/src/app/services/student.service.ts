@@ -5,15 +5,12 @@ import { Observable } from 'rxjs';
 import { Student } from '../models/student';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class StudentService {
+  private readonly apiUrl = 'http://localhost:8080/api/students';
 
-  private apiUrl = 'http://localhost:3000/students';
-
-  constructor(private http: HttpClient) {
-
-  }
+  constructor(private http: HttpClient) {}
 
   getStudents(): Observable<Student[]> {
     return this.http.get<Student[]>(this.apiUrl);
@@ -34,5 +31,4 @@ export class StudentService {
   deleteStudent(id: number | string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
-
 }

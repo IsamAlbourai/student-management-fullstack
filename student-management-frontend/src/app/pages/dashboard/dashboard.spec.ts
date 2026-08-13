@@ -1,13 +1,19 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+
 import { provideRouter } from '@angular/router';
+
 import { of } from 'rxjs';
 
 import { Dashboard } from './dashboard';
+
 import { StudentService } from '../../services/student.service';
+import { AuthService } from '../../services/auth.service';
+
 import { Student } from '../../models/student';
 
 describe('Dashboard', () => {
   let component: Dashboard;
+
   let fixture: ComponentFixture<Dashboard>;
 
   const mockStudents: Student[] = [
@@ -16,14 +22,17 @@ describe('Dashboard', () => {
       name: 'Sam',
       age: 22,
       course: 'Information Technology',
-      skills: ['Angular', 'Java'],
+      departmentId: 1,
+      departmentName: 'Computer Science',
     },
+
     {
       id: 2,
       name: 'John',
       age: 20,
       course: 'Computer Science',
-      skills: ['Python'],
+      departmentId: 1,
+      departmentName: 'Computer Science',
     },
   ];
 
@@ -31,19 +40,31 @@ describe('Dashboard', () => {
     getStudents: () => of(mockStudents),
   };
 
+  const mockAuthService = {
+    isAdmin: () => false,
+  };
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [Dashboard],
+
       providers: [
         provideRouter([]),
+
         {
           provide: StudentService,
           useValue: mockStudentService,
+        },
+
+        {
+          provide: AuthService,
+          useValue: mockAuthService,
         },
       ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(Dashboard);
+
     component = fixture.componentInstance;
 
     fixture.detectChanges();
@@ -57,15 +78,19 @@ describe('Dashboard', () => {
     const element: HTMLElement = fixture.nativeElement;
 
     expect(element.textContent).toContain('Total Students:');
+
     expect(element.textContent).toContain('2');
   });
 
-  it('should display the dashboard action links', () => {
+  it('should display normal dashboard links for a user', () => {
     const element: HTMLElement = fixture.nativeElement;
 
     expect(element.textContent).toContain('View Students');
-    expect(element.textContent).toContain('Add Student');
+
+    expect(element.textContent).not.toContain('Add Student');
+
     expect(element.textContent).toContain('Computer Science');
+
     expect(element.textContent).toContain('Information Technology');
   });
 });

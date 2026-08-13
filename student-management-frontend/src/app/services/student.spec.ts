@@ -9,6 +9,7 @@ import { StudentService } from './student.service';
 
 describe('StudentService', () => {
   let service: StudentService;
+
   let httpTestingController: HttpTestingController;
 
   beforeEach(() => {
@@ -36,14 +37,17 @@ describe('StudentService', () => {
         name: 'Sam',
         age: 22,
         course: 'Information Technology',
-        skills: ['Angular', 'Java'],
+        departmentId: 1,
+        departmentName: 'Computer Science',
       },
+
       {
         id: 2,
         name: 'John',
         age: 20,
         course: 'Computer Science',
-        skills: ['Python'],
+        departmentId: 1,
+        departmentName: 'Computer Science',
       },
     ];
 
@@ -55,7 +59,7 @@ describe('StudentService', () => {
       expect(students[0].name).toBe('Sam');
     });
 
-    const request = httpTestingController.expectOne('http://localhost:3000/students');
+    const request = httpTestingController.expectOne('http://localhost:8080/api/students');
 
     expect(request.request.method).toBe('GET');
 
