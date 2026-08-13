@@ -1,5 +1,6 @@
 package com.example.studentmanagement.controller;
 
+import com.example.studentmanagement.dto.DepartmentResponseDto;
 import com.example.studentmanagement.model.Department;
 import com.example.studentmanagement.repository.DepartmentRepository;
 import org.springframework.http.HttpStatus;
@@ -14,26 +15,56 @@ public class DepartmentController {
 
     private final DepartmentRepository departmentRepository;
 
-    public DepartmentController(DepartmentRepository departmentRepository) {
-        this.departmentRepository = departmentRepository;
+    public DepartmentController(
+            DepartmentRepository departmentRepository) {
+
+        this.departmentRepository =
+                departmentRepository;
     }
 
     @GetMapping
-    public ResponseEntity<List<Department>> getDepartments() {
-        return ResponseEntity.ok(departmentRepository.findAll());
+    public ResponseEntity<List<DepartmentResponseDto>>
+    getDepartments() {
+
+        List<DepartmentResponseDto> departments =
+                departmentRepository
+                        .findAll()
+                        .stream()
+                        .map(this::convertToDto)
+                        .toList();
+
+        return ResponseEntity.ok(
+                departments
+        );
     }
 
     @PostMapping
-    public ResponseEntity<Department> createDepartment(
+    public ResponseEntity<DepartmentResponseDto>
+    createDepartment(
             @RequestBody Department department) {
 
         department.setId(null);
 
         Department savedDepartment =
-                departmentRepository.save(department);
+                departmentRepository.save(
+                        department
+                );
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(savedDepartment);
+                .body(
+                        convertToDto(
+                                savedDepartment
+                        )
+                );
+    }
+
+    private DepartmentResponseDto convertToDto(
+            Department department) {
+
+        return new DepartmentResponseDto(
+                department.getId(),
+                department.getName()
+        );
     }
 }
