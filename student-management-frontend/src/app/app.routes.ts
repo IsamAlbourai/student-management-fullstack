@@ -8,6 +8,7 @@ import { Students } from './pages/students/students';
 import { StudentDetails } from './pages/student-details/student-details';
 import { EditStudent } from './pages/edit-student/edit-student';
 import { ReactiveForm } from './pages/reactive-form/reactive-form';
+import { Departments } from './pages/departments/departments';
 import { Login } from './pages/login/login';
 
 export const routes: Routes = [
@@ -49,6 +50,12 @@ export const routes: Routes = [
   {
     path: 'add-student',
     component: ReactiveForm,
+    canActivate: [adminGuard],
+  },
+
+  {
+    path: 'departments',
+    component: Departments,
     canActivate: [adminGuard],
   },
 

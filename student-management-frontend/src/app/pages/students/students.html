@@ -50,9 +50,7 @@
     ) {
 
     <p class="error-message">
-
       {{ errorMessage() }}
-
     </p>
 
   }
@@ -67,7 +65,7 @@
       id="studentSearch"
       type="text"
       [(ngModel)]="searchText"
-      placeholder="Search by name or course">
+      placeholder="Search by name, course or department">
 
   </div>
 
@@ -173,22 +171,29 @@
               {{ student.course }}
             </strong>
 
-            @if (
-              student.skills
-              &&
-              student.skills.length > 0
-              ) {
+          </td>
 
-              <div class="skills">
+        </ng-container>
 
-                Skills:
-                {{
-                  student.skills.join(', ')
-                }}
+        <ng-container
+          matColumnDef="department">
 
-              </div>
+          <th
+            mat-header-cell
+            *matHeaderCellDef>
 
-            }
+            Department
+
+          </th>
+
+          <td
+            mat-cell
+            *matCellDef="let student">
+
+            {{
+              student.departmentName
+              || 'Not assigned'
+            }}
 
           </td>
 

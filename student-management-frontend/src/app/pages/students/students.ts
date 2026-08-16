@@ -45,8 +45,8 @@ export class Students implements OnInit {
 
   ngOnInit(): void {
     this.displayedColumns = this.authService.isAdmin()
-      ? ['id', 'name', 'age', 'course', 'actions']
-      : ['id', 'name', 'age', 'course'];
+      ? ['id', 'name', 'age', 'course', 'department', 'actions']
+      : ['id', 'name', 'age', 'course', 'department'];
 
     const course = this.route.snapshot.queryParamMap.get('course');
 
@@ -82,7 +82,9 @@ export class Students implements OnInit {
 
     return this.students().filter(
       (student) =>
-        student.name.toLowerCase().includes(text) || student.course.toLowerCase().includes(text),
+        student.name.toLowerCase().includes(text) ||
+        student.course.toLowerCase().includes(text) ||
+        (student.departmentName ?? '').toLowerCase().includes(text),
     );
   }
 

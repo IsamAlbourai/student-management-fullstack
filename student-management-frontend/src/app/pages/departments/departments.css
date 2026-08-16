@@ -1,0 +1,33 @@
+.departments-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.department-card {
+  padding: 8px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.department-row {
+  display: flex;
+  gap: 20px;
+  padding: 14px 0;
+  border-bottom: 1px solid #d8dce5;
+}
+
+.department-row:last-child {
+  border-bottom: none;
+}
+
+.error-message {
+  color: #b00020;
+  margin-top: 16px;
+}
+
+.success-message {
+  margin-top: 16px;
+}

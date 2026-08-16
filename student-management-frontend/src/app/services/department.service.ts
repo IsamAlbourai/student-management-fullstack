@@ -1,20 +1,47 @@
 import { Injectable } from '@angular/core';
 
-import { HttpClient } from '@angular/common/http';
+import {
+  HttpClient
+} from '@angular/common/http';
 
-import { Observable } from 'rxjs';
+import {
+  Observable
+} from 'rxjs';
 
-import { Department } from '../models/department';
+import {
+  Department
+} from '../models/department';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class DepartmentService {
-  private readonly apiUrl = 'http://localhost:8080/api/departments';
 
-  constructor(private http: HttpClient) {}
+  private readonly apiUrl =
+    'http://localhost:8080/api/departments';
 
-  getDepartments(): Observable<Department[]> {
-    return this.http.get<Department[]>(this.apiUrl);
+  constructor(
+    private http: HttpClient
+  ) {
+  }
+
+  getDepartments():
+    Observable<Department[]> {
+
+    return this.http.get<Department[]>(
+      this.apiUrl
+    );
+  }
+
+  createDepartment(
+    name: string
+  ): Observable<Department> {
+
+    return this.http.post<Department>(
+      this.apiUrl,
+      {
+        name
+      }
+    );
   }
 }

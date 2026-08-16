@@ -1,0 +1,134 @@
+<section class="departments-page">
+
+  <h2>
+    Departments
+  </h2>
+
+  <p>
+    Manage the academic departments used by students.
+  </p>
+
+  <mat-card class="department-card">
+
+    <mat-card-header>
+
+      <mat-card-title>
+        Add Department
+      </mat-card-title>
+
+    </mat-card-header>
+
+    <mat-card-content>
+
+      <form
+        (ngSubmit)="createDepartment()">
+
+        <mat-form-field
+          appearance="outline"
+          class="full-width">
+
+          <mat-label>
+            Department Name
+          </mat-label>
+
+          <input
+            matInput
+            type="text"
+            name="departmentName"
+            [(ngModel)]="departmentName"
+            required>
+
+        </mat-form-field>
+
+        <button
+          mat-flat-button
+          type="submit"
+          [disabled]="saving()">
+
+          @if (saving()) {
+
+            Saving...
+
+          } @else {
+
+            Add Department
+
+          }
+
+        </button>
+
+      </form>
+
+      @if (
+        errorMessage()
+        ) {
+
+        <p class="error-message">
+          {{ errorMessage() }}
+        </p>
+
+      }
+
+      @if (
+        successMessage()
+        ) {
+
+        <p class="success-message">
+          {{ successMessage() }}
+        </p>
+
+      }
+
+    </mat-card-content>
+
+  </mat-card>
+
+  <mat-card class="department-card">
+
+    <mat-card-header>
+
+      <mat-card-title>
+        Existing Departments
+      </mat-card-title>
+
+    </mat-card-header>
+
+    <mat-card-content>
+
+      @if (
+        loading()
+        ) {
+
+        <p>
+          Loading departments...
+        </p>
+
+      } @else {
+
+        @for (
+          department
+            of departments();
+          track department.id
+          ) {
+
+          <div class="department-row">
+
+            <span>
+              {{ department.id }}
+            </span>
+
+            <strong>
+              {{ department.name }}
+            </strong>
+
+          </div>
+
+        }
+
+      }
+
+    </mat-card-content>
+
+  </mat-card>
+
+</section>

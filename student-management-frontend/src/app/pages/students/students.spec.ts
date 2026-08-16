@@ -24,7 +24,7 @@ describe('Students', () => {
       id: 1,
       name: 'Sam',
       age: 22,
-      course: 'Information Technology',
+      course: 'Software Engineering',
       departmentId: 1,
       departmentName: 'Computer Science',
     },
@@ -33,9 +33,9 @@ describe('Students', () => {
       id: 2,
       name: 'John',
       age: 20,
-      course: 'Computer Science',
-      departmentId: 1,
-      departmentName: 'Computer Science',
+      course: 'Cybersecurity',
+      departmentId: 2,
+      departmentName: 'Information Technology',
     },
   ];
 
@@ -99,16 +99,22 @@ describe('Students', () => {
     expect(component.students()[0].name).toBe('Sam');
   });
 
-  it('should display the students in the table', () => {
+  it('should display student and department information', () => {
     const element: HTMLElement = fixture.nativeElement;
 
     expect(element.textContent).toContain('Sam');
 
     expect(element.textContent).toContain('John');
 
-    expect(element.textContent).toContain('Information Technology');
+    expect(element.textContent).toContain('Software Engineering');
+
+    expect(element.textContent).toContain('Cybersecurity');
 
     expect(element.textContent).toContain('Computer Science');
+
+    expect(element.textContent).toContain('Information Technology');
+
+    expect(element.textContent).toContain('Department');
 
     expect(element.textContent).toContain('Edit');
 
@@ -126,7 +132,17 @@ describe('Students', () => {
   });
 
   it('should filter students by course', () => {
-    component.searchText = 'Computer Science';
+    component.searchText = 'Cybersecurity';
+
+    const filteredStudents = component.getFilteredStudents();
+
+    expect(filteredStudents.length).toBe(1);
+
+    expect(filteredStudents[0].name).toBe('John');
+  });
+
+  it('should filter students by department', () => {
+    component.searchText = 'Information Technology';
 
     const filteredStudents = component.getFilteredStudents();
 

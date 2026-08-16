@@ -59,4 +59,25 @@ describe('DepartmentService', () => {
 
     request.flush(mockDepartments);
   });
+
+  it('should create a department using POST', () => {
+    const newDepartment = {
+      id: 4,
+      name: 'Data Science',
+    };
+
+    service.createDepartment('Data Science').subscribe((department) => {
+      expect(department).toEqual(newDepartment);
+    });
+
+    const request = httpTestingController.expectOne('http://localhost:8080/api/departments');
+
+    expect(request.request.method).toBe('POST');
+
+    expect(request.request.body).toEqual({
+      name: 'Data Science',
+    });
+
+    request.flush(newDepartment);
+  });
 });
