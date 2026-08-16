@@ -1,113 +1,192 @@
-<h2>
-  Edit Student
-</h2>
+<section class="form-page">
 
-@if (
-  errorMessage()
-  ) {
+  <h2>
+    Edit Student
+  </h2>
 
-  <p>
-    {{ errorMessage() }}
-  </p>
+  @if (
+    loadingStudent()
+    ) {
 
-}
+    <p>
+      Loading student...
+    </p>
 
-<form
-  (ngSubmit)="updateStudent()">
+  } @else {
 
-  <p>
-    Student Name
-  </p>
+    <form
+      (ngSubmit)="updateStudent()">
 
-  <input
-    type="text"
-    name="name"
-    [ngModel]="student().name"
-    (ngModelChange)="
-      student.update(
-        s => ({
-          ...s,
-          name: $event
-        })
-      )
-    "
-    required>
+      <mat-form-field
+        appearance="outline">
 
-  <p>
-    Age
-  </p>
+        <mat-label>
+          Student Name
+        </mat-label>
 
-  <input
-    type="number"
-    name="age"
-    [ngModel]="student().age"
-    (ngModelChange)="
-      student.update(
-        s => ({
-          ...s,
-          age: +$event
-        })
-      )
-    "
-    required
-    min="18"
-    max="120">
+        <input
+          matInput
+          type="text"
+          name="name"
+          [ngModel]="student().name"
+          (ngModelChange)="
+            student.update(
+              s => ({
+                ...s,
+                name: $event
+              })
+            )
+          "
+          required>
 
-  <p>
-    Course
-  </p>
+      </mat-form-field>
 
-  <input
-    type="text"
-    name="course"
-    [ngModel]="student().course"
-    (ngModelChange)="
-      student.update(
-        s => ({
-          ...s,
-          course: $event
-        })
-      )
-    "
-    required>
+      <mat-form-field
+        appearance="outline">
 
-  <p>
-    Department ID
-  </p>
+        <mat-label>
+          Age
+        </mat-label>
 
-  <input
-    type="number"
-    name="departmentId"
-    [ngModel]="student().departmentId"
-    (ngModelChange)="
-      student.update(
-        s => ({
-          ...s,
-          departmentId: +$event
-        })
-      )
-    "
-    required
-    min="1">
+        <input
+          matInput
+          type="number"
+          name="age"
+          [ngModel]="student().age"
+          (ngModelChange)="
+            student.update(
+              s => ({
+                ...s,
+                age: +$event
+              })
+            )
+          "
+          required
+          min="18"
+          max="120">
 
-  <br><br>
+      </mat-form-field>
 
-  <button
-    type="submit"
-    [disabled]="saving()">
+      <mat-form-field
+        appearance="outline">
 
-    @if (
-      saving()
-      ) {
+        <mat-label>
+          Course
+        </mat-label>
 
-      Updating...
+        <input
+          matInput
+          type="text"
+          name="course"
+          [ngModel]="student().course"
+          (ngModelChange)="
+            student.update(
+              s => ({
+                ...s,
+                course: $event
+              })
+            )
+          "
+          required>
 
-    } @else {
+      </mat-form-field>
 
-      Update Student
+      <mat-form-field
+        appearance="outline">
 
-    }
+        <mat-label>
+          Department
+        </mat-label>
 
-  </button>
+        <mat-select
+          name="departmentId"
+          [ngModel]="student().departmentId"
+          (ngModelChange)="
+            student.update(
+              s => ({
+                ...s,
+                departmentId: $event
+              })
+            )
+          "
+          required>
 
-</form>
+          @for (
+            department
+              of departments();
+            track department.id
+            ) {
+
+            <mat-option
+              [value]="department.id">
+
+              {{ department.name }}
+
+            </mat-option>
+
+          }
+
+        </mat-select>
+
+      </mat-form-field>
+
+      @if (
+        loadingDepartments()
+        ) {
+
+        <p>
+          Loading departments...
+        </p>
+
+      }
+
+      @if (
+        departmentError()
+        ) {
+
+        <p>
+          {{ departmentError() }}
+        </p>
+
+      }
+
+      @if (
+        errorMessage()
+        ) {
+
+        <p>
+          {{ errorMessage() }}
+        </p>
+
+      }
+
+      <button
+        mat-flat-button
+        type="submit"
+        [disabled]="
+          saving()
+          ||
+          loadingDepartments()
+          ||
+          departments().length === 0
+        ">
+
+        @if (
+          saving()
+          ) {
+
+          Updating...
+
+        } @else {
+
+          Update Student
+
+        }
+
+      </button>
+
+    </form>
+
+  }
+
+</section>

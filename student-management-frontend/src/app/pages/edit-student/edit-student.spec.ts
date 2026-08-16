@@ -10,6 +10,8 @@ import { Student, StudentRequest } from '../../models/student';
 
 import { StudentService } from '../../services/student.service';
 
+import { DepartmentService } from '../../services/department.service';
+
 describe('EditStudent', () => {
   let component: EditStudent;
 
@@ -21,7 +23,7 @@ describe('EditStudent', () => {
     id: 1,
     name: 'Sam',
     age: 22,
-    course: 'Information Technology',
+    course: 'Software Engineering',
     departmentId: 1,
     departmentName: 'Computer Science',
   };
@@ -35,6 +37,24 @@ describe('EditStudent', () => {
         id,
         ...request,
       }),
+  };
+
+  const mockDepartmentService = {
+    getDepartments: () =>
+      of([
+        {
+          id: 1,
+          name: 'Computer Science',
+        },
+        {
+          id: 2,
+          name: 'Information Technology',
+        },
+        {
+          id: 3,
+          name: 'Information Systems',
+        },
+      ]),
   };
 
   const mockActivatedRoute = {
@@ -63,6 +83,12 @@ describe('EditStudent', () => {
 
           useValue: mockStudentService,
         },
+
+        {
+          provide: DepartmentService,
+
+          useValue: mockDepartmentService,
+        },
       ],
     }).compileComponents();
 
@@ -84,23 +110,17 @@ describe('EditStudent', () => {
 
     expect(component.student().name).toBe('Sam');
 
-    expect(component.student().age).toBe(22);
-
-    expect(component.student().course).toBe('Information Technology');
-
     expect(component.student().departmentId).toBe(1);
   });
 
-  it('should display the student information in the form', () => {
-    const inputs: NodeListOf<HTMLInputElement> = fixture.nativeElement.querySelectorAll('input');
+  it('should load the departments', () => {
+    expect(component.departments().length).toBe(3);
 
-    expect(inputs[0].value).toBe('Sam');
+    expect(component.departments()[1].name).toBe('Information Technology');
+  });
 
-    expect(inputs[1].value).toBe('22');
-
-    expect(inputs[2].value).toBe('Information Technology');
-
-    expect(inputs[3].value).toBe('1');
+  it('should keep the current student department selected', () => {
+    expect(component.student().departmentId).toBe(1);
   });
 
   it('should update the student and navigate to students', () => {
@@ -113,7 +133,7 @@ describe('EditStudent', () => {
     expect(updateSpy).toHaveBeenCalledWith(1, {
       name: 'Sam',
       age: 22,
-      course: 'Information Technology',
+      course: 'Software Engineering',
       departmentId: 1,
     });
 

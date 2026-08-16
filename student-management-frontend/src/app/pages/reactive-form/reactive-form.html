@@ -149,18 +149,33 @@
       appearance="outline">
 
       <mat-label>
-        Department ID
+        Department
       </mat-label>
 
-      <input
-        matInput
-        type="number"
+      <mat-select
         formControlName="departmentId">
+
+        @for (
+          department
+            of departments();
+          track department.id
+          ) {
+
+          <mat-option
+            [value]="department.id">
+
+            {{ department.name }}
+
+          </mat-option>
+
+        }
+
+      </mat-select>
 
       @if (
         studentForm
           .get('departmentId')
-          ?.invalid
+          ?.hasError('required')
         &&
         studentForm
           .get('departmentId')
@@ -168,12 +183,32 @@
         ) {
 
         <mat-error>
-          Department ID is required.
+          Department is required.
         </mat-error>
 
       }
 
     </mat-form-field>
+
+    @if (
+      loadingDepartments()
+      ) {
+
+      <p>
+        Loading departments...
+      </p>
+
+    }
+
+    @if (
+      departmentError()
+      ) {
+
+      <p class="error-message">
+        {{ departmentError() }}
+      </p>
+
+    }
 
     @if (
       errorMessage()
@@ -194,6 +229,8 @@
           studentForm.invalid
           ||
           saving()
+          ||
+          loadingDepartments()
         ">
 
         @if (
