@@ -15,12 +15,12 @@ describe('Departments', () => {
     getDepartments: () =>
       of([
         {
-          id: 1,
-          name: 'Computer Science',
-        },
-        {
           id: 2,
           name: 'Information Technology',
+        },
+        {
+          id: 1,
+          name: 'Computer Science',
         },
         {
           id: 3,
@@ -36,6 +36,8 @@ describe('Departments', () => {
   };
 
   beforeEach(async () => {
+    vi.clearAllMocks();
+
     await TestBed.configureTestingModule({
       imports: [Departments],
 
@@ -59,14 +61,22 @@ describe('Departments', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should load departments', () => {
+  it('should load and alphabetically sort departments', () => {
     expect(component.departments().length).toBe(3);
 
     expect(component.departments()[0].name).toBe('Computer Science');
+
+    expect(component.departments()[1].name).toBe('Information Systems');
+
+    expect(component.departments()[2].name).toBe('Information Technology');
   });
 
-  it('should display existing departments', () => {
+  it('should display department table headings and departments', () => {
     const element: HTMLElement = fixture.nativeElement;
+
+    expect(element.textContent).toContain('ID');
+
+    expect(element.textContent).toContain('Department Name');
 
     expect(element.textContent).toContain('Computer Science');
 
@@ -75,7 +85,7 @@ describe('Departments', () => {
     expect(element.textContent).toContain('Information Systems');
   });
 
-  it('should create a department', () => {
+  it('should create and alphabetically sort a new department', () => {
     const createSpy = vi.spyOn(mockDepartmentService, 'createDepartment');
 
     component.departmentName = 'Data Science';
@@ -86,8 +96,26 @@ describe('Departments', () => {
 
     expect(component.departments().length).toBe(4);
 
-    expect(component.departments()[3].name).toBe('Data Science');
+    expect(component.departments()[0].name).toBe('Computer Science');
+
+    expect(component.departments()[1].name).toBe('Data Science');
+
+    expect(component.departments()[2].name).toBe('Information Systems');
+
+    expect(component.departments()[3].name).toBe('Information Technology');
 
     expect(component.successMessage()).toBe('Department created successfully.');
+  });
+
+  it('should reject an empty department name', () => {
+    const createSpy = vi.spyOn(mockDepartmentService, 'createDepartment');
+
+    component.departmentName = '   ';
+
+    component.createDepartment();
+
+    expect(createSpy).not.toHaveBeenCalled();
+
+    expect(component.createErrorMessage()).toBe('Department name is required.');
   });
 });

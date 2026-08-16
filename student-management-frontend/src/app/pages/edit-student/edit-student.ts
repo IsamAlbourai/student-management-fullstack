@@ -1,299 +1,237 @@
-import {
-  Component,
-  OnInit,
-  signal
-} from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 
-import {
-  FormsModule
-} from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 
-import {
-  ActivatedRoute,
-  Router
-} from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
-import {
-  MatFormFieldModule
-} from '@angular/material/form-field';
+import { MatButtonModule } from '@angular/material/button';
 
-import {
-  MatInputModule
-} from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
-import {
-  MatSelectModule
-} from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
 
-import {
-  MatButtonModule
-} from '@angular/material/button';
+import { MatSelectModule } from '@angular/material/select';
 
-import {
-  Department
-} from '../../models/department';
+import { Department } from '../../models/department';
 
-import {
-  Student,
-  StudentRequest
-} from '../../models/student';
+import { Student, StudentRequest } from '../../models/student';
 
-import {
-  DepartmentService
-} from '../../services/department.service';
+import { DepartmentService } from '../../services/department.service';
 
-import {
-  StudentService
-} from '../../services/student.service';
+import { StudentService } from '../../services/student.service';
 
 @Component({
   selector: 'app-edit-student',
 
-  imports: [
-    FormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    MatButtonModule
-  ],
+  imports: [FormsModule, MatButtonModule, MatFormFieldModule, MatInputModule, MatSelectModule],
 
   templateUrl: './edit-student.html',
 
   styleUrl: './edit-student.css',
 })
-export class EditStudent
-  implements OnInit {
+export class EditStudent implements OnInit {
+  student = signal<Student>({
+    id: 0,
+    name: '',
+    age: 18,
+    course: '',
+    departmentId: null,
+    departmentName: null,
+  });
 
-  student =
-    signal<Student>({
+  departments = signal<Department[]>([]);
 
-      id: 0,
+  loadingStudent = signal(true);
 
-      name: '',
+  loadingDepartments = signal(true);
 
-      age: 18,
+  studentLoadError = signal('');
 
-      course: '',
+  departmentError = signal('');
 
-      departmentId: null,
+  errorMessage = signal('');
 
-      departmentName: null,
-    });
-
-  departments =
-    signal<Department[]>([]);
-
-  loadingStudent =
-    signal(true);
-
-  loadingDepartments =
-    signal(true);
-
-  departmentError =
-    signal('');
-
-  errorMessage =
-    signal('');
-
-  saving =
-    signal(false);
+  saving = signal(false);
 
   constructor(
     private route: ActivatedRoute,
+
     private router: Router,
+
     private studentService: StudentService,
+
     private departmentService: DepartmentService,
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
-
     this.loadDepartments();
 
     this.loadStudent();
   }
 
   loadDepartments(): void {
-
     this.loadingDepartments.set(true);
 
     this.departmentError.set('');
 
-    this.departmentService
-      .getDepartments()
-      .subscribe({
+    this.departments.set([]);
 
-        next: departments => {
+    this.departmentService.getDepartments().subscribe({
+      next: (departments) => {
+        const sortedDepartments = [...departments].sort((first, second) =>
+          first.name.localeCompare(second.name),
+        );
 
-          this.departments.set(
-            departments
-          );
+        this.departments.set(sortedDepartments);
 
-          this.loadingDepartments.set(
-            false
-          );
-        },
+        this.loadingDepartments.set(false);
 
-        error: () => {
-
-          this.loadingDepartments.set(
-            false
-          );
-
+        if (sortedDepartments.length === 0) {
           this.departmentError.set(
-            'Failed to load departments.'
+            'No departments are available. Create a department before editing this student.',
           );
         }
+      },
 
-      });
+      error: (error) => {
+        this.loadingDepartments.set(false);
+
+        if (error.status === 0) {
+          this.departmentError.set(
+            'Unable to connect to the server. Please make sure the backend is running.',
+          );
+
+          return;
+        }
+
+        this.departmentError.set('Failed to load departments. Please try again.');
+      },
+    });
   }
 
   loadStudent(): void {
-
-    const id =
-      this.route.snapshot
-        .paramMap
-        .get('id');
+    const id = this.route.snapshot.paramMap.get('id');
 
     if (!id) {
+      this.studentLoadError.set('Invalid student ID.');
 
-      this.errorMessage.set(
-        'Invalid student ID.'
-      );
-
-      this.loadingStudent.set(
-        false
-      );
+      this.loadingStudent.set(false);
 
       return;
     }
 
-    this.studentService
-      .getStudentById(id)
-      .subscribe({
+    this.studentLoadError.set('');
 
-        next: data => {
+    this.loadingStudent.set(true);
 
-          this.student.set(data);
+    this.studentService.getStudentById(id).subscribe({
+      next: (data) => {
+        this.student.set(data);
 
-          this.loadingStudent.set(
-            false
-          );
-        },
+        this.loadingStudent.set(false);
+      },
 
-        error: () => {
+      error: (error) => {
+        this.loadingStudent.set(false);
 
-          this.errorMessage.set(
-            'Student could not be loaded.'
-          );
+        if (error.status === 404) {
+          this.studentLoadError.set('Student could not be found.');
 
-          this.loadingStudent.set(
-            false
-          );
+          return;
         }
 
-      });
+        if (error.status === 0) {
+          this.studentLoadError.set(
+            'Unable to connect to the server. Please make sure the backend is running.',
+          );
+
+          return;
+        }
+
+        this.studentLoadError.set('Failed to load the student. Please try again.');
+      },
+    });
   }
 
   updateStudent(): void {
+    const currentStudent = this.student();
 
-    const currentStudent =
-      this.student();
+    const name = currentStudent.name.trim();
 
-    if (
-      currentStudent.departmentId === null
-    ) {
+    const course = currentStudent.course.trim();
 
-      this.errorMessage.set(
-        'Department is required.'
-      );
+    if (!name) {
+      this.errorMessage.set('Student name is required.');
 
       return;
     }
 
-    const request:
-      StudentRequest = {
+    if (currentStudent.age < 18 || currentStudent.age > 120) {
+      this.errorMessage.set('Age must be between 18 and 120.');
 
-      name:
-        currentStudent
-          .name
-          .trim(),
+      return;
+    }
 
-      age:
-        Number(
-          currentStudent.age
-        ),
+    if (!course) {
+      this.errorMessage.set('Course is required.');
 
-      course:
-        currentStudent
-          .course
-          .trim(),
+      return;
+    }
 
-      departmentId:
-        Number(
-          currentStudent
-            .departmentId
-        )
+    if (currentStudent.departmentId === null) {
+      this.errorMessage.set('Department is required.');
+
+      return;
+    }
+
+    const request: StudentRequest = {
+      name,
+
+      age: Number(currentStudent.age),
+
+      course,
+
+      departmentId: Number(currentStudent.departmentId),
     };
 
     this.errorMessage.set('');
 
     this.saving.set(true);
 
-    this.studentService
-      .updateStudent(
-        currentStudent.id,
-        request
-      )
-      .subscribe({
+    this.studentService.updateStudent(currentStudent.id, request).subscribe({
+      next: () => {
+        this.saving.set(false);
 
-        next: () => {
+        this.router.navigate(['/students']);
+      },
 
-          this.saving.set(false);
+      error: (error) => {
+        this.saving.set(false);
 
-          this.router.navigate([
-            '/students'
-          ]);
-        },
-
-        error: error => {
-
-          this.saving.set(false);
-
-          if (
-            error.status === 400
-            &&
-            error.error?.errors
-          ) {
-
-            const messages =
-              Object.values(
-                error.error.errors
-              );
-
-            this.errorMessage.set(
-              messages.join(' ')
-            );
-
-            return;
-          }
-
-          if (
-            error.status === 404
-          ) {
-
-            this.errorMessage.set(
-              'The selected department could not be found.'
-            );
-
-            return;
-          }
-
+        if (error.status === 0) {
           this.errorMessage.set(
-            'Failed to update the student.'
+            'Unable to connect to the server. Please try again when the backend is available.',
           );
+
+          return;
         }
 
-      });
+        if (error.status === 400 && error.error?.errors) {
+          const messages = Object.values(error.error.errors);
+
+          this.errorMessage.set(messages.join(' '));
+
+          return;
+        }
+
+        if (error.status === 404) {
+          this.errorMessage.set('The student or selected department could not be found.');
+
+          return;
+        }
+
+        this.errorMessage.set('Failed to update the student. Please try again.');
+      },
+    });
   }
 }

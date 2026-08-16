@@ -10,6 +10,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 
 import { MatInputModule } from '@angular/material/input';
 
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+
 import { Department } from '../../models/department';
 
 import { DepartmentService } from '../../services/department.service';
@@ -17,7 +19,14 @@ import { DepartmentService } from '../../services/department.service';
 @Component({
   selector: 'app-departments',
 
-  imports: [FormsModule, MatButtonModule, MatCardModule, MatFormFieldModule, MatInputModule],
+  imports: [
+    FormsModule,
+    MatButtonModule,
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatProgressSpinnerModule,
+  ],
 
   templateUrl: './departments.html',
 
@@ -32,7 +41,9 @@ export class Departments implements OnInit {
 
   saving = signal(false);
 
-  errorMessage = signal('');
+  loadErrorMessage = signal('');
+
+  createErrorMessage = signal('');
 
   successMessage = signal('');
 
@@ -45,19 +56,27 @@ export class Departments implements OnInit {
   loadDepartments(): void {
     this.loading.set(true);
 
-    this.errorMessage.set('');
+    this.loadErrorMessage.set('');
 
     this.departmentService.getDepartments().subscribe({
       next: (departments) => {
-        this.departments.set(departments);
+        this.departments.set(this.sortDepartments(departments));
 
         this.loading.set(false);
       },
 
-      error: () => {
+      error: (error) => {
         this.loading.set(false);
 
-        this.errorMessage.set('Failed to load departments.');
+        if (error.status === 0) {
+          this.loadErrorMessage.set(
+            'Unable to connect to the server. Please make sure the backend is running.',
+          );
+
+          return;
+        }
+
+        this.loadErrorMessage.set('Failed to load departments. Please try again.');
       },
     });
   }
@@ -66,12 +85,14 @@ export class Departments implements OnInit {
     const name = this.departmentName.trim();
 
     if (!name) {
-      this.errorMessage.set('Department name is required.');
+      this.createErrorMessage.set('Department name is required.');
+
+      this.successMessage.set('');
 
       return;
     }
 
-    this.errorMessage.set('');
+    this.createErrorMessage.set('');
 
     this.successMessage.set('');
 
@@ -79,7 +100,9 @@ export class Departments implements OnInit {
 
     this.departmentService.createDepartment(name).subscribe({
       next: (department) => {
-        this.departments.update((departments) => [...departments, department]);
+        this.departments.update((departments) =>
+          this.sortDepartments([...departments, department]),
+        );
 
         this.departmentName = '';
 
@@ -88,11 +111,29 @@ export class Departments implements OnInit {
         this.successMessage.set('Department created successfully.');
       },
 
-      error: () => {
+      error: (error) => {
         this.saving.set(false);
 
-        this.errorMessage.set('Failed to create department.');
+        if (error.status === 409) {
+          this.createErrorMessage.set('A department with this name already exists.');
+
+          return;
+        }
+
+        if (error.status === 0) {
+          this.createErrorMessage.set(
+            'Unable to connect to the server. Please try again when the backend is available.',
+          );
+
+          return;
+        }
+
+        this.createErrorMessage.set('Failed to create department. Please try again.');
       },
     });
+  }
+
+  private sortDepartments(departments: Department[]): Department[] {
+    return [...departments].sort((first, second) => first.name.localeCompare(second.name));
   }
 }

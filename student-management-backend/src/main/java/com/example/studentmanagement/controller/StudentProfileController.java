@@ -1,12 +1,16 @@
 package com.example.studentmanagement.controller;
 
 import com.example.studentmanagement.dto.StudentProfileResponseDto;
+import com.example.studentmanagement.exception.StudentNotFoundException;
+import com.example.studentmanagement.exception.StudentProfileNotFoundException;
 import com.example.studentmanagement.model.Student;
 import com.example.studentmanagement.model.StudentProfile;
 import com.example.studentmanagement.repository.StudentProfileRepository;
 import com.example.studentmanagement.repository.StudentRepository;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -39,10 +43,8 @@ public class StudentProfileController {
                 studentProfileRepository
                         .findByStudentId(studentId)
                         .orElseThrow(() ->
-                                new RuntimeException(
-                                        "Profile for student ID "
-                                                + studentId
-                                                + " not found"
+                                new StudentProfileNotFoundException(
+                                        studentId
                                 )
                         );
 
@@ -61,7 +63,7 @@ public class StudentProfileController {
                 studentRepository
                         .findById(studentId)
                         .orElseThrow(() ->
-                                new RuntimeException(
+                                new StudentNotFoundException(
                                         "Student with ID "
                                                 + studentId
                                                 + " not found"
@@ -74,7 +76,7 @@ public class StudentProfileController {
                         .isPresent()
         ) {
 
-            throw new RuntimeException(
+            throw new IllegalStateException(
                     "Student already has a profile"
             );
         }
@@ -106,10 +108,8 @@ public class StudentProfileController {
                 studentProfileRepository
                         .findByStudentId(studentId)
                         .orElseThrow(() ->
-                                new RuntimeException(
-                                        "Profile for student ID "
-                                                + studentId
-                                                + " not found"
+                                new StudentProfileNotFoundException(
+                                        studentId
                                 )
                         );
 
@@ -126,11 +126,14 @@ public class StudentProfileController {
                         .save(existingProfile);
 
         return ResponseEntity.ok(
-                convertToDto(savedProfile)
+                convertToDto(
+                        savedProfile
+                )
         );
     }
 
-    private StudentProfileResponseDto convertToDto(
+    private StudentProfileResponseDto
+    convertToDto(
             StudentProfile profile) {
 
         Student student =

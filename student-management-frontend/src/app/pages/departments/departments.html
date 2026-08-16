@@ -1,4 +1,4 @@
-<section class="departments-page">
+<div class="departments-page">
 
   <h2>
     Departments
@@ -20,51 +20,50 @@
 
     <mat-card-content>
 
-      <form
-        (ngSubmit)="createDepartment()">
+      <mat-form-field
+        appearance="outline"
+        class="full-width">
 
-        <mat-form-field
-          appearance="outline"
-          class="full-width">
+        <mat-label>
+          Department Name
+        </mat-label>
 
-          <mat-label>
-            Department Name
-          </mat-label>
+        <input
+          matInput
+          type="text"
+          [(ngModel)]="departmentName"
+          name="departmentName"
+          [disabled]="saving()"
+          required>
 
-          <input
-            matInput
-            type="text"
-            name="departmentName"
-            [(ngModel)]="departmentName"
-            required>
+      </mat-form-field>
 
-        </mat-form-field>
+      <button
+        mat-flat-button
+        type="button"
+        (click)="createDepartment()"
+        [disabled]="saving()">
 
-        <button
-          mat-flat-button
-          type="submit"
-          [disabled]="saving()">
+        @if (
+          saving()
+          ) {
 
-          @if (saving()) {
+          Adding...
 
-            Saving...
+        } @else {
 
-          } @else {
+          Add Department
 
-            Add Department
+        }
 
-          }
-
-        </button>
-
-      </form>
+      </button>
 
       @if (
-        errorMessage()
+        createErrorMessage()
         ) {
 
         <p class="error-message">
-          {{ errorMessage() }}
+          {{ createErrorMessage() }}
         </p>
 
       }
@@ -99,11 +98,52 @@
         loading()
         ) {
 
-        <p>
-          Loading departments...
-        </p>
+        <div class="loading-state">
+
+          <mat-spinner
+            diameter="36">
+          </mat-spinner>
+
+          <span>
+            Loading departments...
+          </span>
+
+        </div>
+
+      } @else if (
+        loadErrorMessage()
+        ) {
+
+        <div class="error-state">
+
+          <p class="error-message">
+            {{ loadErrorMessage() }}
+          </p>
+
+          <button
+            mat-stroked-button
+            type="button"
+            (click)="loadDepartments()">
+
+            Try Again
+
+          </button>
+
+        </div>
 
       } @else {
+
+        <div class="department-header">
+
+          <span>
+            ID
+          </span>
+
+          <span>
+            Department Name
+          </span>
+
+        </div>
 
         @for (
           department
@@ -123,6 +163,12 @@
 
           </div>
 
+        } @empty {
+
+          <p class="empty-state">
+            No departments have been created yet.
+          </p>
+
         }
 
       }
@@ -131,4 +177,4 @@
 
   </mat-card>
 
-</section>
+</div>

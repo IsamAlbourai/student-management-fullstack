@@ -1,15 +1,39 @@
 .student-card {
-  max-width: 500px;
-  padding: 20px;
-  margin-top: 20px;
-  border: 1px solid #cccccc;
-  border-radius: 8px;
+  max-width: 700px;
+  padding: 24px;
+  border: 1px solid #d8dce5;
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
 .student-card h3 {
-  margin-top: 0;
+  margin: 0 0 22px;
+  font-size: 1.4rem;
+}
+
+.student-card p {
+  margin: 14px 0;
+  line-height: 1.5;
 }
 
 .student-card button {
-  margin-top: 10px;
+  margin-top: 16px;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 24px;
+  background: #006ac3;
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.student-card button:hover {
+  background: #0059a4;
+}
+
+.student-card button:focus-visible {
+  outline: 3px solid rgba(0, 106, 195, 0.3);
+  outline-offset: 2px;
 }

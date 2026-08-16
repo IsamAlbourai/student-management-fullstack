@@ -204,9 +204,22 @@
       departmentError()
       ) {
 
-      <p class="error-message">
-        {{ departmentError() }}
-      </p>
+      <div class="error-block">
+
+        <p class="error-message">
+          {{ departmentError() }}
+        </p>
+
+        <button
+          mat-stroked-button
+          type="button"
+          (click)="loadDepartments()">
+
+          Try Again
+
+        </button>
+
+      </div>
 
     }
 
@@ -231,6 +244,8 @@
           saving()
           ||
           loadingDepartments()
+          ||
+          departments().length === 0
         ">
 
         @if (

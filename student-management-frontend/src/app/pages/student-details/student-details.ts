@@ -95,10 +95,16 @@ export class StudentDetails implements OnInit {
         this.loadProfile(studentId);
       },
 
-      error: () => {
-        this.errorMessage.set('Student could not be found.');
-
+      error: (error) => {
         this.isLoading.set(false);
+
+        if (error.status === 404) {
+          this.errorMessage.set('Student could not be found.');
+
+          return;
+        }
+
+        this.errorMessage.set('Failed to load student details.');
       },
     });
   }
@@ -107,6 +113,12 @@ export class StudentDetails implements OnInit {
     this.profileLoading.set(true);
 
     this.profileError.set('');
+
+    this.profileSuccess.set('');
+
+    this.profile.set(undefined);
+
+    this.profileExists.set(false);
 
     this.studentProfileService.getProfileByStudentId(studentId).subscribe({
       next: (profile) => {
@@ -124,13 +136,13 @@ export class StudentDetails implements OnInit {
       error: (error) => {
         this.profileLoading.set(false);
 
-        if (error.status === 404 || error.status === 500) {
+        if (error.status === 404) {
           this.profileExists.set(false);
 
           return;
         }
 
-        this.profileError.set('Failed to load student profile.');
+        this.profileError.set('Failed to load the student profile. Please try again.');
       },
     });
   }
@@ -142,6 +154,10 @@ export class StudentDetails implements OnInit {
       this.profileEmail = profile.email;
 
       this.profilePhoneNumber = profile.phoneNumber;
+    } else {
+      this.profileEmail = '';
+
+      this.profilePhoneNumber = '';
     }
 
     this.profileError.set('');
@@ -152,6 +168,18 @@ export class StudentDetails implements OnInit {
   }
 
   cancelProfileEdit(): void {
+    const profile = this.profile();
+
+    if (profile) {
+      this.profileEmail = profile.email;
+
+      this.profilePhoneNumber = profile.phoneNumber;
+    } else {
+      this.profileEmail = '';
+
+      this.profilePhoneNumber = '';
+    }
+
     this.profileEditMode.set(false);
 
     this.profileError.set('');
@@ -201,10 +229,20 @@ export class StudentDetails implements OnInit {
           this.profileSuccess.set('Profile updated successfully.');
         },
 
-        error: () => {
+        error: (error) => {
           this.profileSaving.set(false);
 
-          this.profileError.set('Failed to update profile.');
+          if (error.status === 404) {
+            this.profileExists.set(false);
+
+            this.profileEditMode.set(false);
+
+            this.profileError.set('This profile no longer exists. You can create a new one.');
+
+            return;
+          }
+
+          this.profileError.set('Failed to update profile. Please try again.');
         },
       });
 
@@ -224,10 +262,24 @@ export class StudentDetails implements OnInit {
         this.profileSuccess.set('Profile created successfully.');
       },
 
-      error: () => {
+      error: (error) => {
         this.profileSaving.set(false);
 
-        this.profileError.set('Failed to create profile.');
+        if (error.status === 409) {
+          this.profileError.set(
+            'This student already has a profile. Refresh the page and try again.',
+          );
+
+          return;
+        }
+
+        if (error.status === 404) {
+          this.profileError.set('The student could not be found.');
+
+          return;
+        }
+
+        this.profileError.set('Failed to create profile. Please try again.');
       },
     });
   }
@@ -242,8 +294,14 @@ export class StudentDetails implements OnInit {
         this.router.navigate(['/students']);
       },
 
-      error: () => {
-        this.errorMessage.set('Failed to delete the student.');
+      error: (error) => {
+        if (error.status === 404) {
+          this.errorMessage.set('Student could not be found.');
+
+          return;
+        }
+
+        this.errorMessage.set('Failed to delete the student. Please try again.');
       },
     });
   }

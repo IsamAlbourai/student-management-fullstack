@@ -39,178 +39,79 @@
     isLoading()
     ) {
 
-    <p>
-      Loading students, please wait...
-    </p>
+    <div class="loading-state">
 
-  }
+      <mat-spinner
+        diameter="36">
+      </mat-spinner>
 
-  @if (
+      <span>
+        Loading students...
+      </span>
+
+    </div>
+
+  } @else if (
     errorMessage()
     ) {
 
-    <p class="error-message">
-      {{ errorMessage() }}
-    </p>
+    <div class="error-state">
 
-  }
+      <p class="error-message">
+        {{ errorMessage() }}
+      </p>
 
-  <div class="search-section">
+      <button
+        mat-stroked-button
+        type="button"
+        (click)="loadStudents()">
 
-    <label for="studentSearch">
-      Search
-    </label>
+        Try Again
 
-    <input
-      id="studentSearch"
-      type="text"
-      [(ngModel)]="searchText"
-      placeholder="Search by name, course or department">
+      </button>
 
-  </div>
+    </div>
 
-  @if (
-    !isLoading()
-    &&
-    !errorMessage()
-    ) {
+  } @else {
 
-    <div class="table-container">
+    <div class="search-section">
 
-      <table
-        mat-table
-        [dataSource]="getFilteredStudents()">
+      <label for="studentSearch">
+        Search
+      </label>
 
-        <ng-container
-          matColumnDef="id">
+      <input
+        id="studentSearch"
+        type="text"
+        [(ngModel)]="searchText"
+        placeholder="Search by name, course or department">
 
-          <th
-            mat-header-cell
-            *matHeaderCellDef>
+    </div>
 
-            ID
+    @if (
+      getFilteredStudents().length === 0
+      ) {
 
-          </th>
+      <p class="empty-state">
+        No students match your search.
+      </p>
 
-          <td
-            mat-cell
-            *matCellDef="let student">
+    } @else {
 
-            {{ student.id }}
+      <div class="table-container">
 
-          </td>
-
-        </ng-container>
-
-        <ng-container
-          matColumnDef="name">
-
-          <th
-            mat-header-cell
-            *matHeaderCellDef>
-
-            Name
-
-          </th>
-
-          <td
-            mat-cell
-            *matCellDef="let student">
-
-            <a
-              [routerLink]="[
-                '/students',
-                student.id
-              ]">
-
-              {{ student.name }}
-
-            </a>
-
-          </td>
-
-        </ng-container>
-
-        <ng-container
-          matColumnDef="age">
-
-          <th
-            mat-header-cell
-            *matHeaderCellDef>
-
-            Age
-
-          </th>
-
-          <td
-            mat-cell
-            *matCellDef="let student">
-
-            {{ student.age }}
-
-          </td>
-
-        </ng-container>
-
-        <ng-container
-          matColumnDef="course">
-
-          <th
-            mat-header-cell
-            *matHeaderCellDef>
-
-            Course
-
-          </th>
-
-          <td
-            mat-cell
-            *matCellDef="let student">
-
-            <strong>
-              {{ student.course }}
-            </strong>
-
-          </td>
-
-        </ng-container>
-
-        <ng-container
-          matColumnDef="department">
-
-          <th
-            mat-header-cell
-            *matHeaderCellDef>
-
-            Department
-
-          </th>
-
-          <td
-            mat-cell
-            *matCellDef="let student">
-
-            {{
-              student.departmentName
-              || 'Not assigned'
-            }}
-
-          </td>
-
-        </ng-container>
-
-        @if (
-          authService.isAdmin()
-          ) {
+        <table
+          mat-table
+          [dataSource]="getFilteredStudents()">
 
           <ng-container
-            matColumnDef="actions">
+            matColumnDef="id">
 
             <th
               mat-header-cell
               *matHeaderCellDef>
 
-              Actions
+              ID
 
             </th>
 
@@ -218,65 +119,212 @@
               mat-cell
               *matCellDef="let student">
 
-              <div class="actions">
-
-                <button
-                  mat-stroked-button
-                  [routerLink]="[
-                    '/students',
-                    student.id,
-                    'edit'
-                  ]">
-
-                  <mat-icon>
-                    edit
-                  </mat-icon>
-
-                  Edit
-
-                </button>
-
-                <button
-                  mat-flat-button
-                  type="button"
-                  (click)="
-                    openDeleteDialog(student)
-                  ">
-
-                  <mat-icon>
-                    delete
-                  </mat-icon>
-
-                  Delete
-
-                </button>
-
-              </div>
+              {{ student.id }}
 
             </td>
 
           </ng-container>
 
-        }
+          <ng-container
+            matColumnDef="name">
 
-        <tr
-          mat-header-row
-          *matHeaderRowDef="
-            displayedColumns
-          ">
-        </tr>
+            <th
+              mat-header-cell
+              *matHeaderCellDef>
 
-        <tr
-          mat-row
-          *matRowDef="
-            let row;
-            columns: displayedColumns;
-          ">
-        </tr>
+              Name
 
-      </table>
+            </th>
 
-    </div>
+            <td
+              mat-cell
+              *matCellDef="let student">
+
+              <a
+                [routerLink]="[
+                  '/students',
+                  student.id
+                ]">
+
+                {{ student.name }}
+
+              </a>
+
+            </td>
+
+          </ng-container>
+
+          <ng-container
+            matColumnDef="age">
+
+            <th
+              mat-header-cell
+              *matHeaderCellDef>
+
+              Age
+
+            </th>
+
+            <td
+              mat-cell
+              *matCellDef="let student">
+
+              {{ student.age }}
+
+            </td>
+
+          </ng-container>
+
+          <ng-container
+            matColumnDef="course">
+
+            <th
+              mat-header-cell
+              *matHeaderCellDef>
+
+              Course
+
+            </th>
+
+            <td
+              mat-cell
+              *matCellDef="let student">
+
+              <strong>
+                {{ student.course }}
+              </strong>
+
+            </td>
+
+          </ng-container>
+
+          <ng-container
+            matColumnDef="department">
+
+            <th
+              mat-header-cell
+              *matHeaderCellDef>
+
+              Department
+
+            </th>
+
+            <td
+              mat-cell
+              *matCellDef="let student">
+
+              {{
+                student.departmentName
+                || 'Not assigned'
+              }}
+
+            </td>
+
+          </ng-container>
+
+          @if (
+            authService.isAdmin()
+            ) {
+
+            <ng-container
+              matColumnDef="actions">
+
+              <th
+                mat-header-cell
+                *matHeaderCellDef>
+
+                Actions
+
+              </th>
+
+              <td
+                mat-cell
+                *matCellDef="let student">
+
+                <div class="actions">
+
+                  <button
+                    mat-stroked-button
+                    [routerLink]="[
+                      '/students',
+                      student.id,
+                      'edit'
+                    ]"
+                    [disabled]="
+                      deletingStudentId()
+                      !== null
+                    ">
+
+                    <mat-icon>
+                      edit
+                    </mat-icon>
+
+                    Edit
+
+                  </button>
+
+                  <button
+                    mat-flat-button
+                    type="button"
+                    (click)="
+                      openDeleteDialog(student)
+                    "
+                    [disabled]="
+                      deletingStudentId()
+                      !== null
+                    ">
+
+                    @if (
+                      deletingStudentId()
+                      === student.id
+                      ) {
+
+                      Deleting...
+
+                    } @else {
+
+                      <ng-container>
+
+                        <mat-icon>
+                          delete
+                        </mat-icon>
+
+                        Delete
+
+                      </ng-container>
+
+                    }
+
+                  </button>
+
+                </div>
+
+              </td>
+
+            </ng-container>
+
+          }
+
+          <tr
+            mat-header-row
+            *matHeaderRowDef="
+              displayedColumns
+            ">
+          </tr>
+
+          <tr
+            mat-row
+            *matRowDef="
+              let row;
+              columns: displayedColumns;
+            ">
+          </tr>
+
+        </table>
+
+      </div>
+
+    }
 
   }
 

@@ -13,7 +13,11 @@
 
     <a
       mat-button
-      routerLink="/dashboard">
+      routerLink="/dashboard"
+      routerLinkActive="active-nav"
+      [routerLinkActiveOptions]="{
+        exact: true
+      }">
 
       Dashboard
 
@@ -21,7 +25,8 @@
 
     <a
       mat-button
-      routerLink="/students">
+      routerLink="/students"
+      routerLinkActive="active-nav">
 
       Students
 
@@ -33,7 +38,11 @@
 
       <a
         mat-button
-        routerLink="/add-student">
+        routerLink="/add-student"
+        routerLinkActive="active-nav"
+        [routerLinkActiveOptions]="{
+          exact: true
+        }">
 
         Add Student
 
@@ -41,7 +50,11 @@
 
       <a
         mat-button
-        routerLink="/departments">
+        routerLink="/departments"
+        routerLinkActive="active-nav"
+        [routerLinkActiveOptions]="{
+          exact: true
+        }">
 
         Departments
 
@@ -53,7 +66,11 @@
 
   <a
     mat-button
-    routerLink="/about">
+    routerLink="/about"
+    routerLinkActive="active-nav"
+    [routerLinkActiveOptions]="{
+      exact: true
+    }">
 
     About
 
@@ -65,7 +82,11 @@
 
     <a
       mat-button
-      routerLink="/login">
+      routerLink="/login"
+      routerLinkActive="active-nav"
+      [routerLinkActiveOptions]="{
+        exact: true
+      }">
 
       Sign In
 
@@ -77,8 +98,7 @@
     authService.isLoggedIn()
     ) {
 
-    <span
-      class="user-info">
+    <span class="user-info">
 
       {{ authService.getUsername() }}
 

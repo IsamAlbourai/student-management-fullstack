@@ -8,9 +8,30 @@
     loadingStudent()
     ) {
 
-    <p>
+    <p class="loading-message">
       Loading student...
     </p>
+
+  } @else if (
+    studentLoadError()
+    ) {
+
+    <div class="error-block">
+
+      <p class="error-message">
+        {{ studentLoadError() }}
+      </p>
+
+      <button
+        mat-stroked-button
+        type="button"
+        (click)="loadStudent()">
+
+        Try Again
+
+      </button>
+
+    </div>
 
   } @else {
 
@@ -37,6 +58,7 @@
               })
             )
           "
+          [disabled]="saving()"
           required>
 
       </mat-form-field>
@@ -61,6 +83,7 @@
               })
             )
           "
+          [disabled]="saving()"
           required
           min="18"
           max="120">
@@ -87,6 +110,7 @@
               })
             )
           "
+          [disabled]="saving()"
           required>
 
       </mat-form-field>
@@ -108,6 +132,13 @@
                 departmentId: $event
               })
             )
+          "
+          [disabled]="
+            saving()
+            ||
+            loadingDepartments()
+            ||
+            departments().length === 0
           "
           required>
 
@@ -134,7 +165,7 @@
         loadingDepartments()
         ) {
 
-        <p>
+        <p class="loading-message">
           Loading departments...
         </p>
 
@@ -144,9 +175,22 @@
         departmentError()
         ) {
 
-        <p>
-          {{ departmentError() }}
-        </p>
+        <div class="error-block">
+
+          <p class="error-message">
+            {{ departmentError() }}
+          </p>
+
+          <button
+            mat-stroked-button
+            type="button"
+            (click)="loadDepartments()">
+
+            Try Again
+
+          </button>
+
+        </div>
 
       }
 
@@ -154,36 +198,40 @@
         errorMessage()
         ) {
 
-        <p>
+        <p class="error-message">
           {{ errorMessage() }}
         </p>
 
       }
 
-      <button
-        mat-flat-button
-        type="submit"
-        [disabled]="
-          saving()
-          ||
-          loadingDepartments()
-          ||
-          departments().length === 0
-        ">
+      <div class="form-actions">
 
-        @if (
-          saving()
-          ) {
+        <button
+          mat-flat-button
+          type="submit"
+          [disabled]="
+            saving()
+            ||
+            loadingDepartments()
+            ||
+            departments().length === 0
+          ">
 
-          Updating...
+          @if (
+            saving()
+            ) {
 
-        } @else {
+            Updating...
 
-          Update Student
+          } @else {
 
-        }
+            Update Student
 
-      </button>
+          }
+
+        </button>
+
+      </div>
 
     </form>
 

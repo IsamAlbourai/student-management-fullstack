@@ -2,46 +2,123 @@ package com.example.studentmanagement.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
 import org.springframework.web.bind.MethodArgumentNotValidException;
+
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.time.LocalDateTime;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(StudentNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleStudentNotFound(
+    @ExceptionHandler(
+            StudentNotFoundException.class
+    )
+    public ResponseEntity<ErrorResponse>
+    handleStudentNotFound(
             StudentNotFoundException exception) {
 
-        ErrorResponse errorResponse = new ErrorResponse(
-                HttpStatus.NOT_FOUND.value(),
-                exception.getMessage(),
-                LocalDateTime.now()
-        );
+        ErrorResponse errorResponse =
+                new ErrorResponse(
+                        HttpStatus
+                                .NOT_FOUND
+                                .value(),
+
+                        exception
+                                .getMessage(),
+
+                        LocalDateTime.now()
+                );
 
         return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(errorResponse);
+                .status(
+                        HttpStatus.NOT_FOUND
+                )
+                .body(
+                        errorResponse
+                );
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, Object>> handleValidationErrors(
+    @ExceptionHandler(
+            StudentProfileNotFoundException.class
+    )
+    public ResponseEntity<ErrorResponse>
+    handleStudentProfileNotFound(
+            StudentProfileNotFoundException exception) {
+
+        ErrorResponse errorResponse =
+                new ErrorResponse(
+                        HttpStatus
+                                .NOT_FOUND
+                                .value(),
+
+                        exception
+                                .getMessage(),
+
+                        LocalDateTime.now()
+                );
+
+        return ResponseEntity
+                .status(
+                        HttpStatus.NOT_FOUND
+                )
+                .body(
+                        errorResponse
+                );
+    }
+
+    @ExceptionHandler(
+            IllegalStateException.class
+    )
+    public ResponseEntity<ErrorResponse>
+    handleIllegalState(
+            IllegalStateException exception) {
+
+        ErrorResponse errorResponse =
+                new ErrorResponse(
+                        HttpStatus
+                                .CONFLICT
+                                .value(),
+
+                        exception
+                                .getMessage(),
+
+                        LocalDateTime.now()
+                );
+
+        return ResponseEntity
+                .status(
+                        HttpStatus.CONFLICT
+                )
+                .body(
+                        errorResponse
+                );
+    }
+
+    @ExceptionHandler(
+            MethodArgumentNotValidException.class
+    )
+    public ResponseEntity<Map<String, Object>>
+    handleValidationErrors(
             MethodArgumentNotValidException exception) {
 
         Map<String, String> fieldErrors =
                 new LinkedHashMap<>();
 
-        exception.getBindingResult()
+        exception
+                .getBindingResult()
                 .getFieldErrors()
-                .forEach(error ->
-                        fieldErrors.put(
-                                error.getField(),
-                                error.getDefaultMessage()
-                        )
+                .forEach(
+                        error ->
+                                fieldErrors.put(
+                                        error.getField(),
+                                        error.getDefaultMessage()
+                                )
                 );
 
         Map<String, Object> response =
@@ -49,7 +126,9 @@ public class GlobalExceptionHandler {
 
         response.put(
                 "status",
-                HttpStatus.BAD_REQUEST.value()
+                HttpStatus
+                        .BAD_REQUEST
+                        .value()
         );
 
         response.put(

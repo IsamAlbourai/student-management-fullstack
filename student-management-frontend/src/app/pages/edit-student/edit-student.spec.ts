@@ -21,10 +21,15 @@ describe('EditStudent', () => {
 
   const mockStudent: Student = {
     id: 1,
+
     name: 'Sam',
+
     age: 22,
+
     course: 'Software Engineering',
+
     departmentId: 1,
+
     departmentName: 'Computer Science',
   };
 
@@ -66,6 +71,8 @@ describe('EditStudent', () => {
   };
 
   beforeEach(async () => {
+    vi.clearAllMocks();
+
     await TestBed.configureTestingModule({
       imports: [EditStudent],
 
@@ -113,10 +120,14 @@ describe('EditStudent', () => {
     expect(component.student().departmentId).toBe(1);
   });
 
-  it('should load the departments', () => {
+  it('should load and alphabetically sort the departments', () => {
     expect(component.departments().length).toBe(3);
 
-    expect(component.departments()[1].name).toBe('Information Technology');
+    expect(component.departments()[0].name).toBe('Computer Science');
+
+    expect(component.departments()[1].name).toBe('Information Systems');
+
+    expect(component.departments()[2].name).toBe('Information Technology');
   });
 
   it('should keep the current student department selected', () => {

@@ -16,6 +16,20 @@ mat-toolbar > span:first-child {
   flex: 1 1 auto;
 }
 
+mat-toolbar a,
+mat-toolbar button {
+  border-radius: 28px;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+mat-toolbar a.active-nav {
+  background-color: #eaf2fd;
+  color: #172033;
+  font-weight: 600;
+}
+
 .user-info {
   margin-left: 16px;
   margin-right: 8px;
