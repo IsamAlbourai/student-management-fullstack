@@ -143,6 +143,10 @@
             Department Name
           </span>
 
+          <span>
+            Actions
+          </span>
+
         </div>
 
         @for (
@@ -157,9 +161,88 @@
               {{ department.id }}
             </span>
 
-            <strong>
-              {{ department.name }}
-            </strong>
+            @if (
+              editingDepartmentId()
+              === department.id
+              ) {
+
+              <div class="edit-field">
+
+                <input
+                  type="text"
+                  [(ngModel)]="editingDepartmentName"
+                  [disabled]="updating()">
+
+                @if (
+                  editErrorMessage()
+                  ) {
+
+                  <p class="inline-error">
+                    {{ editErrorMessage() }}
+                  </p>
+
+                }
+
+              </div>
+
+              <div class="actions">
+
+                <button
+                  mat-flat-button
+                  type="button"
+                  (click)="saveEdit(department)"
+                  [disabled]="updating()">
+
+                  @if (
+                    updating()
+                    ) {
+
+                    Saving...
+
+                  } @else {
+
+                    Save
+
+                  }
+
+                </button>
+
+                <button
+                  mat-stroked-button
+                  type="button"
+                  (click)="cancelEdit()"
+                  [disabled]="updating()">
+
+                  Cancel
+
+                </button>
+
+              </div>
+
+            } @else {
+
+              <strong>
+                {{ department.name }}
+              </strong>
+
+              <div class="actions">
+
+                <button
+                  mat-stroked-button
+                  type="button"
+                  (click)="startEdit(department)"
+                  [disabled]="
+                    editingDepartmentId()
+                    !== null
+                  ">
+
+                  Edit
+
+                </button>
+
+              </div>
+
+            }
 
           </div>
 

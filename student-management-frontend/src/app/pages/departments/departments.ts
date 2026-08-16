@@ -41,9 +41,17 @@ export class Departments implements OnInit {
 
   saving = signal(false);
 
+  editingDepartmentId = signal<number | null>(null);
+
+  editingDepartmentName = '';
+
+  updating = signal(false);
+
   loadErrorMessage = signal('');
 
   createErrorMessage = signal('');
+
+  editErrorMessage = signal('');
 
   successMessage = signal('');
 
@@ -129,6 +137,96 @@ export class Departments implements OnInit {
         }
 
         this.createErrorMessage.set('Failed to create department. Please try again.');
+      },
+    });
+  }
+
+  startEdit(department: Department): void {
+    this.editingDepartmentId.set(department.id);
+
+    this.editingDepartmentName = department.name;
+
+    this.editErrorMessage.set('');
+
+    this.successMessage.set('');
+  }
+
+  cancelEdit(): void {
+    this.editingDepartmentId.set(null);
+
+    this.editingDepartmentName = '';
+
+    this.editErrorMessage.set('');
+  }
+
+  saveEdit(department: Department): void {
+    const name = this.editingDepartmentName.trim();
+
+    if (!name) {
+      this.editErrorMessage.set('Department name is required.');
+
+      return;
+    }
+
+    if (name.toLowerCase() === department.name.trim().toLowerCase()) {
+      this.cancelEdit();
+
+      return;
+    }
+
+    this.updating.set(true);
+
+    this.editErrorMessage.set('');
+
+    this.successMessage.set('');
+
+    this.departmentService.updateDepartment(department.id, name).subscribe({
+      next: (updatedDepartment) => {
+        this.departments.update((departments) =>
+          this.sortDepartments(
+            departments.map((currentDepartment) =>
+              currentDepartment.id === updatedDepartment.id ? updatedDepartment : currentDepartment,
+            ),
+          ),
+        );
+
+        this.updating.set(false);
+
+        this.editingDepartmentId.set(null);
+
+        this.editingDepartmentName = '';
+
+        this.successMessage.set('Department updated successfully.');
+      },
+
+      error: (error) => {
+        this.updating.set(false);
+
+        if (error.status === 409) {
+          this.editErrorMessage.set('A department with this name already exists.');
+
+          return;
+        }
+
+        if (error.status === 404) {
+          this.editErrorMessage.set('The department could not be found.');
+
+          return;
+        }
+
+        if (error.status === 400) {
+          this.editErrorMessage.set('Department name is invalid.');
+
+          return;
+        }
+
+        if (error.status === 0) {
+          this.editErrorMessage.set('Unable to connect to the server. Please try again.');
+
+          return;
+        }
+
+        this.editErrorMessage.set('Failed to update department. Please try again.');
       },
     });
   }
