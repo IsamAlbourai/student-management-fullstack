@@ -1,0 +1,26 @@
+.student-details-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.profile-card {
+  max-width: 700px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.profile-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.error-message {
+  color: #b00020;
+}
+
+.success-message {
+  margin-top: 12px;
+}

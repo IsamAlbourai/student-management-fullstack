@@ -1,40 +1,222 @@
-<h2>
-  Student Details
-</h2>
+<section class="student-details-page">
 
-@if (
-  isLoading()
-  ) {
+  <h2>
+    Student Details
+  </h2>
 
-  <p>
-    Loading student details...
-  </p>
+  @if (
+    isLoading()
+    ) {
 
-} @else if (
-  errorMessage()
-  ) {
+    <p>
+      Loading student details...
+    </p>
 
-  <p>
-    {{ errorMessage() }}
-  </p>
+  } @else if (
+    errorMessage()
+    ) {
 
-} @else if (
-  student();
-  as selectedStudent
-  ) {
+    <p>
+      {{ errorMessage() }}
+    </p>
 
-  <app-student-card
-    [student]="selectedStudent"
-    [canDelete]="authService.isAdmin()"
-    (deleteRequested)="
-      deleteStudent($event)
-    ">
-  </app-student-card>
+  } @else if (
+    student();
+    as selectedStudent
+    ) {
 
-}
+    <app-student-card
+      [student]="selectedStudent"
+      [canDelete]="authService.isAdmin()"
+      (deleteRequested)="
+        deleteStudent($event)
+      ">
+    </app-student-card>
 
-<br>
+    <mat-card class="profile-card">
 
-<a routerLink="/students">
-  Back to Students
-</a>
+      <mat-card-header>
+
+        <mat-card-title>
+          Student Profile
+        </mat-card-title>
+
+      </mat-card-header>
+
+      <mat-card-content>
+
+        @if (
+          profileLoading()
+          ) {
+
+          <p>
+            Loading profile...
+          </p>
+
+        } @else if (
+          profileEditMode()
+          ) {
+
+          <form
+            (ngSubmit)="saveProfile()">
+
+            <mat-form-field
+              appearance="outline"
+              class="full-width">
+
+              <mat-label>
+                Email
+              </mat-label>
+
+              <input
+                matInput
+                type="email"
+                name="profileEmail"
+                [(ngModel)]="profileEmail"
+                required>
+
+            </mat-form-field>
+
+            <mat-form-field
+              appearance="outline"
+              class="full-width">
+
+              <mat-label>
+                Phone Number
+              </mat-label>
+
+              <input
+                matInput
+                type="text"
+                name="profilePhoneNumber"
+                [(ngModel)]="
+                  profilePhoneNumber
+                ">
+
+            </mat-form-field>
+
+            <div class="profile-actions">
+
+              <button
+                mat-flat-button
+                type="submit"
+                [disabled]="profileSaving()">
+
+                @if (
+                  profileSaving()
+                  ) {
+
+                  Saving...
+
+                } @else {
+
+                  Save Profile
+
+                }
+
+              </button>
+
+              <button
+                mat-stroked-button
+                type="button"
+                (click)="cancelProfileEdit()">
+
+                Cancel
+
+              </button>
+
+            </div>
+
+          </form>
+
+        } @else if (
+          profileExists()
+          &&
+          profile();
+          as studentProfile
+          ) {
+
+          <p>
+            <strong>Email:</strong>
+            {{ studentProfile.email }}
+          </p>
+
+          <p>
+            <strong>Phone:</strong>
+            {{
+              studentProfile.phoneNumber
+              || 'Not provided'
+            }}
+          </p>
+
+          @if (
+            authService.isAdmin()
+            ) {
+
+            <button
+              mat-stroked-button
+              type="button"
+              (click)="startProfileEdit()">
+
+              Edit Profile
+
+            </button>
+
+          }
+
+        } @else {
+
+          <p>
+            No profile has been created for this student.
+          </p>
+
+          @if (
+            authService.isAdmin()
+            ) {
+
+            <button
+              mat-flat-button
+              type="button"
+              (click)="startProfileEdit()">
+
+              Add Profile
+
+            </button>
+
+          }
+
+        }
+
+        @if (
+          profileError()
+          ) {
+
+          <p class="error-message">
+            {{ profileError() }}
+          </p>
+
+        }
+
+        @if (
+          profileSuccess()
+          ) {
+
+          <p class="success-message">
+            {{ profileSuccess() }}
+          </p>
+
+        }
+
+      </mat-card-content>
+
+    </mat-card>
+
+  }
+
+  <br>
+
+  <a routerLink="/students">
+    Back to Students
+  </a>
+
+</section>
